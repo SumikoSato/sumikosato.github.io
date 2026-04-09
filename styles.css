@@ -1,0 +1,273 @@
+/* Uma Musume-inspired design */
+
+:root {
+  --green-light: #8FD040;
+  --green-dark:  #5FA820;
+  --bg-page:     #EEEDF4;
+  --bg-card:     #FFFFFF;
+  --border:      #D2D0DC;
+  --text-main:   #2C2C2C;
+  --text-sub:    #6A6A7A;
+  --orange:      #F08C00;
+}
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg-page);
+  color: var(--text-main);
+}
+
+/* ── Layout ───────────────────────────────────────────── */
+.appRoot {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+/* ── Card ─────────────────────────────────────────────── */
+.card {
+  width: min(900px, 100%);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
+  border-radius: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.cardHeader {
+  background: linear-gradient(180deg, #98D94A 0%, #5EA820 100%);
+  padding: 14px 20px;
+  text-align: center;
+}
+
+.cardBody {
+  padding: 22px 20px 20px;
+}
+
+/* ── Typography ───────────────────────────────────────── */
+.title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+  color: #FFFFFF;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+  letter-spacing: 0.02em;
+}
+
+.lead {
+  line-height: 1.75;
+  white-space: pre-wrap;
+  margin: 0 0 16px;
+  text-align: center;
+  color: var(--text-sub);
+}
+
+.textBlock {
+  line-height: 1.8;
+  white-space: pre-wrap;
+  color: var(--text-main);
+}
+
+/* ── Controls / Buttons ───────────────────────────────── */
+.controls {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+button {
+  cursor: pointer;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-radius: 10px;
+  padding: 11px 24px;
+  font-weight: 700;
+  font-size: 15px;
+  transition: transform 0.05s ease, opacity 0.15s ease;
+  min-width: 88px;
+}
+
+button:hover  { opacity: 0.82; }
+button:active { transform: translateY(1px); }
+
+button.primary {
+  background: linear-gradient(180deg, #98D94A 0%, #5EA820 100%);
+  border-color: #4E9414;
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 3px 10px rgba(80, 160, 24, 0.35);
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Resource pills ───────────────────────────────────── */
+.resourceLine {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.resourcePill {
+  padding: 6px 16px;
+  border-radius: 10px;
+  border: none;
+  background: var(--orange);
+  font-weight: 800;
+  color: #FFFFFF;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+
+/* ── Select ───────────────────────────────────────────── */
+select {
+  width: 100%;
+  max-width: 520px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: #FFFFFF;
+  color: #000000;
+  font-weight: 700;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── HUD bars ─────────────────────────────────────────── */
+.barWrap { width: 100%; }
+
+.barLabel {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.barOuter {
+  height: 14px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+/* 精力条 */
+.barInner {
+  height: 100%;
+  background: linear-gradient(90deg, #FFB07A 0%, #FF7040 100%);
+  width: 0%;
+  border-radius: 10px;
+}
+
+/* 认可度条 */
+.barInner--recognition {
+  height: 100%;
+  background: linear-gradient(90deg, #55CAFF 0%, #1A90D0 100%);
+  width: 0%;
+  border-radius: 10px;
+}
+
+.hudGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .hudGrid { grid-template-columns: 1fr; }
+}
+
+/* ── Modal ────────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.50);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.modalOverlay.open { display: flex; }
+
+.modal {
+  width: min(560px, 100%);
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+}
+
+.modalHeader {
+  background: linear-gradient(180deg, #98D94A 0%, #5EA820 100%);
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.modal h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.modalContent {
+  padding: 16px 18px;
+}
+
+.modal .modalBody {
+  line-height: 1.75;
+  white-space: pre-wrap;
+  color: var(--text-main);
+}
+
+/* ── Footer ───────────────────────────────────────────── */
+.pageFooter {
+  margin-top: 24px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #AAAAB8;
+}
+
+.pageFooter a {
+  color: #AAAAB8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.pageFooter a:hover {
+  color: var(--green-dark);
+}

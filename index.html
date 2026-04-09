@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>去马娘Only是什么感觉</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app" class="appRoot">正在加载游戏......</div>
+
+    <!-- 纯前端：用 ES Modules 加载 -->
+    <script>
+      // file:// 下 ES Module 可能无法加载；给出明显提示避免“卡死在加载中”。
+      setTimeout(() => {
+        const el = document.getElementById("app");
+        if (el && /正在加载游戏/.test(el.textContent || "")) {
+          el.textContent =
+            "正在加载游戏......（如果一直不出现内容，请用本地服务器打开：例如 http://localhost）。";
+        }
+      }, 2000);
+    </script>
+    <script type="module" src="./src/game.js"></script>
+  </body>
+</html>
+
