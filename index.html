@@ -3,24 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 禁止浏览器缓存 HTML 本体，确保每次都拿到最新版本 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>去马娘Only是什么感觉</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <!-- 版本号查询参数：每次发布新版本时更新 ?v= 后面的值，浏览器将强制拉取新文件 -->
+    <link rel="stylesheet" href="./styles.css?v=26.4.16" />
   </head>
   <body>
     <div id="app" class="appRoot">正在加载游戏......</div>
 
     <!-- 纯前端：用 ES Modules 加载 -->
     <script>
-      // file:// 下 ES Module 可能无法加载；给出明显提示避免“卡死在加载中”。
+      // file:// 下 ES Module 可能无法加载；给出明显提示避免"卡死在加载中"。
       setTimeout(() => {
         const el = document.getElementById("app");
         if (el && /正在加载游戏/.test(el.textContent || "")) {
           el.textContent =
-            "正在加载游戏......（如果一直不出现内容，请检查互联网连接，如您将代码克隆到本地，请用本地服务器打开）。";
+            "正在加载游戏......（如果一直不出现内容，请检查互联网连接，如您将代码克隆到本地，请用本地服务器打开。";
         }
       }, 2000);
     </script>
-    <script type="module" src="./src/game.js"></script>
+    <!-- 版本号查询参数同 CSS，发布时同步修改 -->
+    <script type="module" src="./src/game.js?v=26.4.16"></script>
   </body>
 </html>
-
