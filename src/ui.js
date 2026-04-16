@@ -141,7 +141,7 @@ function appendFooter(container) {
       e.preventDefault();
       setModal(true, {
         title: "更新日志",
-        body: "UmaFesSimulator 26.4.16 开发版 更新内容\n——修复 现在有痛车情况下，cos服一栏固定刷出对应角色\n——添加 妆娘跑路彩蛋\n——修复 不做无料就不能加同人老师好友的问题\n——添加 游客/coser状态指示\n——添加 版本号的概念\n——优化 部分事件的文案表现\n添加 清除游戏数据功能",
+        body: "UmaFesSimulator 26.4.16 开发版 更新内容\n——修复 现在有痛车情况下，cos服一栏固定刷出对应角色\n——添加 妆娘跑路彩蛋\n——修复 不做无料就不能加同人老师好友的问题\n——添加 游客/coser状态指示\n——添加 版本号的概念\n——优化 部分事件的文案表现\n——添加 清除游戏数据功能",
         confirmLabel: "我知道了",
       });
     },
