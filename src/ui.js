@@ -128,7 +128,8 @@ function appendFooter(container) {
         cancelLabel: "取消",
         onConfirm: () => {
           localStorage.removeItem("maoOnly_textAdventure_save_v1");
-          location.reload();
+          // 带时间戳跳转，强制浏览器跳过缓存拉取服务器最新版本
+          location.href = location.pathname + "?nocache=" + Date.now();
         },
       });
     },
