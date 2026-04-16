@@ -139,8 +139,7 @@ function createRoleSelection(rng = Math.random) {
     specialLabel = specialId === "none" ? "无" : specialId === "mid" ? "中" : "强";
   }
 
-  // Draw order (spec): cosplay服装 -> 智能手机 -> 痛车 -> 痛车样式
-  const wardrobeCosplays = sampleWithoutReplacement(COSPLAY_POOL, wardrobeCosCount, rng);
+  // Draw order: 手机 -> 痛车+样式 -> 衣柜（若有痛车，样式固定为衣柜第一套）
   const phone = pickPhoneForTemplate(templateId, rng);
 
   let painCar = { id: "none", label: "无" };
@@ -150,10 +149,18 @@ function createRoleSelection(rng = Math.random) {
     const painPickId = weightedPick(painItems, rng);
     const painPicked = painItems.find((x) => x.id === painPickId);
     painCar = { id: painPicked.id, label: painPicked.label };
-    painCarStyle = sampleWithoutReplacement(COSPLAY_POOL, 1, rng)[0];
-    if (painCar.id === "none") {
-      painCarStyle = null;
+    if (painCar.id !== "none") {
+      painCarStyle = sampleWithoutReplacement(COSPLAY_POOL, 1, rng)[0];
     }
+  }
+
+  // 有痛车样式时：衣柜第一套固定与痛车样式相同，其余从剩余池抽取
+  let wardrobeCosplays;
+  if (painCarStyle) {
+    const remaining = COSPLAY_POOL.filter((c) => c !== painCarStyle);
+    wardrobeCosplays = [painCarStyle, ...sampleWithoutReplacement(remaining, wardrobeCosCount - 1, rng)];
+  } else {
+    wardrobeCosplays = sampleWithoutReplacement(COSPLAY_POOL, wardrobeCosCount, rng);
   }
 
   return {
@@ -395,10 +402,10 @@ function enterPhaseD10(state) {
     nodeId: "event_makeup_choice",
     title: "要约化妆师吗",
     text:
-      "距离马O还剩下10天，你发现你需要一个化妆师（当然，群里管这个叫妆娘），虽然约妆的确是有点花钱，但是实际上，如果不化妆的话，除非你是那种超级好看的，否则还是很容易被人头套扯一地。",
+      "距离马O还剩下10天，你发现：如果你需要出cos的话，你需要一个化妆师（当然，群里管这个叫妆娘），虽然约妆的确是有点花钱，但是实际上，如果不化妆的话，除非你是那种超级好看的，否则还是很容易被人头套扯一地。\n当然，如果你想做游客的话，倒也没关系。",
     choices: [
       { choiceId: "choice_makeup_yes", label: "去约妆", primary: true },
-      { choiceId: "choice_makeup_no", label: "还是算了" },
+      { choiceId: "choice_makeup_no", label: "还是算了，游客，启动！" },
     ],
   });
 }
@@ -526,7 +533,7 @@ function enterPhaseD3(state) {
     },
     choices: [
       { choiceId: "prep_pick", label: "就决定是你了！", primary: true },
-      { choiceId: "prep_skip", label: "还是算了" },
+      { choiceId: "prep_skip", label: "还是算了，游客，启动！" },
     ],
   });
 }
@@ -646,6 +653,15 @@ function enterPhaseMorning(state) {
 }
 
 function enterEventToMakeup(state) {
+  // 1/30 chance: makeup artist runs away
+  if (Math.random() < 1 / 30) {
+    return setGameNode(state, {
+      nodeId: "event_makeup_runaway",
+      title: "妆娘跑路了！",
+      text: "你和其他找这位妆娘化妆的同好们集体在酒店楼下傻了眼，因为你们发现，无论是微信语音还是电话，没有一样可以接通。\n最终你和他们傻等了两个小时，只好顶着一张没化过妆的脸赶去马娘Only的现场，并希望不要被人头套扯一地。",
+      choices: [{ choiceId: "makeup_runaway_grit", label: "硬着头皮，挤上地铁", primary: true }],
+    });
+  }
   return setGameNode(state, {
     nodeId: "event_go_makeup",
     title: "前往化妆",
@@ -918,6 +934,7 @@ function resolveExhibitionEventVariant(state, eventId) {
       text: "你遇到了一位同人作者，她递给你一份无料，其中的自我介绍，你觉得这是一个很有态度的人......",
       choices: [
         { choiceId: "ex_expansion_btn1", label: "加好友并交换周边（认可度+10，周边数量-1）", primary: true, requiresBadges: 1 },
+        { choiceId: "ex_expansion_btn3", label: "加好友（认可度+3）" },
         { choiceId: "ex_expansion_btn2", label: "还是不了（认可度-5）" },
       ],
     };
@@ -967,6 +984,7 @@ function resolveExhibitionEventVariant(state, eventId) {
         choices: [
           { choiceId: "ex_wrong_btn1", label: "阻止", primary: true },
           { choiceId: "ex_wrong_btn2", label: "不阻止（认可度-40）" },
+          { choiceId: "ex_wrong_btn3", label: "呼叫保安（认可度-20，精力值-20）" },
         ],
       };
     }
@@ -981,6 +999,7 @@ function resolveExhibitionEventVariant(state, eventId) {
         choices: [
           { choiceId: "ex_no_makeup_btn1", label: "跑！（认可度-50）", primary: true },
           { choiceId: "ex_no_makeup_btn2", label: "不跑" },
+          { choiceId: "ex_no_makeup_btn3", label: "呼叫保安（认可度-20，精力值-20）" },
         ],
       };
     }
@@ -1368,6 +1387,17 @@ function dispatch(actionId, ctx = {}) {
         }
         break;
 
+      case "event_makeup_runaway":
+        if (actionId === "makeup_runaway_grit") {
+          // makeupDone stays false; advance time by 2 hours from booked slot
+          state.run.makeupDone = false;
+          const bookedBase = (state.run.makeupBookedTime ?? 9) * 60;
+          state.run.timeMinutes = bookedBase + 120;
+          updateHudText(state);
+          return enterPhaseSubway(state);
+        }
+        break;
+
       case "event_go_makeup":
         if (actionId === "makeup_done") {
           applyMakeupEnergyAndTime(state);
@@ -1572,6 +1602,14 @@ function dispatch(actionId, ctx = {}) {
           if (state.run.timeMinutes >= 18 * 60) return enterPhaseAfterOnly(state);
           return enterExhibitionEvent(state);
         }
+        if (actionId === "ex_expansion_btn3") {
+          state.run.recognition = clamp01to100(state.run.recognition + 3);
+          state.run.timeMinutes += 30;
+          updateHudText(state);
+          if (checkAndEndNoOneLikesMeIfNeeded(state)) return;
+          if (state.run.timeMinutes >= 18 * 60) return enterPhaseAfterOnly(state);
+          return enterExhibitionEvent(state);
+        }
         if (actionId === "ex_expansion_btn2") {
           state.run.recognition = clamp01to100(state.run.recognition - 5);
           state.run.timeMinutes += 30;
@@ -1631,6 +1669,16 @@ function dispatch(actionId, ctx = {}) {
           if (state.run.timeMinutes >= 18 * 60) return enterPhaseAfterOnly(state);
           return enterExhibitionEvent(state);
         }
+        if (actionId === "ex_wrong_btn3") {
+          state.run.recognition = clamp01to100(state.run.recognition - 20);
+          state.run.energy = clamp01to100((state.run.energy ?? 0) - 20);
+          state.run.timeMinutes += 30;
+          updateHudText(state);
+          if (checkAndEndNoOneLikesMeIfNeeded(state)) return;
+          if (checkAndEndLoveYourselfIfNeeded(state)) return;
+          if (state.run.timeMinutes >= 18 * 60) return enterPhaseAfterOnly(state);
+          return enterExhibitionEvent(state);
+        }
         break;
 
       case "ex_no_makeup":
@@ -1643,6 +1691,16 @@ function dispatch(actionId, ctx = {}) {
           return enterExhibitionEvent(state);
         }
         if (actionId === "ex_no_makeup_btn2") return setEnding(state, "wigTorn");
+        if (actionId === "ex_no_makeup_btn3") {
+          state.run.recognition = clamp01to100(state.run.recognition - 20);
+          state.run.energy = clamp01to100((state.run.energy ?? 0) - 20);
+          state.run.timeMinutes += 30;
+          updateHudText(state);
+          if (checkAndEndNoOneLikesMeIfNeeded(state)) return;
+          if (checkAndEndLoveYourselfIfNeeded(state)) return;
+          if (state.run.timeMinutes >= 18 * 60) return enterPhaseAfterOnly(state);
+          return enterExhibitionEvent(state);
+        }
         break;
 
       case "ex_has_pin":

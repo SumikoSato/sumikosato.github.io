@@ -36,7 +36,7 @@ export function bindUI({ onAction }) {
   dispatchAction = onAction;
 }
 
-export function setModal(open, { title, body, confirmLabel } = {}) {
+export function setModal(open, { title, body, confirmLabel, cancelLabel, onConfirm } = {}) {
   let overlay = document.getElementById("modalOverlay");
   if (!overlay) {
     overlay = document.createElement("div");
@@ -48,23 +48,35 @@ export function setModal(open, { title, body, confirmLabel } = {}) {
   overlay.classList.toggle("open", open);
   if (!open) return;
 
+  const btnConfirm = el("button", {
+    className: "primary",
+    text: confirmLabel || "确认",
+    onclick: () => {
+      if (onConfirm) {
+        onConfirm();
+      } else {
+        dispatchAction && dispatchAction("modal_confirm");
+      }
+    },
+  });
+
+  const btnRow = [btnConfirm];
+  if (cancelLabel) {
+    btnRow.unshift(
+      el("button", {
+        text: cancelLabel,
+        onclick: () => setModal(false),
+      }),
+    );
+  }
+
   const modal = el("div", { className: "modal" }, [
     el("div", { className: "modalHeader" }, [
       el("h3", { text: title || "" }),
     ]),
     el("div", { className: "modalContent" }, [
       el("div", { className: "modalBody", text: body || "" }),
-      el(
-        "div",
-        { className: "controls", style: "justify-content:flex-end; margin-top:14px;" },
-        [
-          el("button", {
-            className: "primary",
-            text: confirmLabel || "确认",
-            onclick: () => dispatchAction && dispatchAction("modal_confirm"),
-          }),
-        ],
-      ),
+      el("div", { className: "controls", style: "justify-content:flex-end; margin-top:14px;" }, btnRow),
     ]),
   ]);
   overlay.appendChild(modal);
@@ -104,10 +116,42 @@ function appendFooter(container) {
     },
   });
 
+  const clearLink = el("a", {
+    href: "#",
+    text: "清除游戏数据",
+    onclick: (e) => {
+      e.preventDefault();
+      setModal(true, {
+        title: "请注意",
+        body: "您正在尝试清除游戏数据，我们推荐您每次更新版本时，都进行一次清除。",
+        confirmLabel: "清除数据",
+        cancelLabel: "取消",
+        onConfirm: () => {
+          localStorage.removeItem("maoOnly_textAdventure_save_v1");
+          location.reload();
+        },
+      });
+    },
+  });
+
+  const versionLink = el("a", {
+    href: "#",
+    text: "版本号：UmaFesSimulator 26.4.16 开发版",
+    onclick: (e) => {
+      e.preventDefault();
+      setModal(true, {
+        title: "更新日志",
+        body: "UmaFesSimulator 26.4.16 开发版 更新内容\n——修复 现在有痛车情况下，cos服一栏固定刷出对应角色\n——添加 妆娘跑路彩蛋\n——修复 不做无料就不能加同人老师好友的问题\n——添加 游客/coser状态指示\n——添加 版本号的概念\n——优化 部分事件的文案表现\n添加 清除游戏数据功能",
+        confirmLabel: "我知道了",
+      });
+    },
+  });
+
   container.appendChild(
     el("div", { className: "pageFooter" }, [
       el("div", {}, [copyrightLink]),
       el("div", {}, [aiLink]),
+      el("div", { style: "display:flex; gap:16px; justify-content:center;" }, [versionLink, clearLink]),
     ]),
   );
 }
@@ -216,12 +260,19 @@ export function render(state) {
     if (state.run) {
       const money  = state.run.money  ?? 0;
       const badges = state.run.backpackBadges ?? 0;
-      body.appendChild(
-        el("div", { className: "resourceLine" }, [
-          el("div", { className: "resourcePill", text: `金钱：${money}` }),
-          el("div", { className: "resourcePill", text: `周边：${badges}` }),
-        ]),
-      );
+      const isCoser = (state.run.backpackCosplays || []).length > 0;
+      const pills = [
+        el("div", { className: "resourcePill", text: `金钱：${money}` }),
+        el("div", { className: "resourcePill", text: `周边：${badges}` }),
+      ];
+      // 仅在展会阶段（recognition 已激活）显示形态
+      if (state.recognition != null) {
+        pills.push(el("div", {
+          className: "resourcePill resourcePill--status",
+          text: `形态：${isCoser ? "Coser" : "游客"}`,
+        }));
+      }
+      body.appendChild(el("div", { className: "resourceLine" }, pills));
     }
 
     const bars = [];
