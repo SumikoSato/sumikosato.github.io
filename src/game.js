@@ -973,7 +973,7 @@ function enterPhaseOnlyWelcome(state) {
 }
 
 function calcEasterWeight(missCount) {
-  return Math.min(1 + missCount * 2, 15);
+  return Math.min(1 + missCount * 5, 30);
 }
 
 function enterExhibitionEvent(state) {
@@ -1190,8 +1190,12 @@ function resolveExhibitionEventVariant(state, eventId) {
   }
 
   if (eventId === "zoom_zoom") {
-    const ok = isPainCarMazda(state) && state.run.travelMode === "selfDrive";
-    if (!ok || state.run.flags.easterZoomZoomUsed) return wind;
+    const mazda = isPainCarMazda(state);
+    const sd = state.run.travelMode === "selfDrive";
+    const used = !!state.run.flags.easterZoomZoomUsed;
+    console.log("[zoom_zoom] mazda=%s sd=%s used=%s label=%s mode=%s", mazda, sd, used, state.run.painCarLabel, state.run.travelMode);
+    const ok = mazda && sd;
+    if (!ok || used) return wind;
     state.run.flags.easterZoomZoomUsed = true;
     state.zoomMissCount = 0;
     unlockAchievement("mazda");
