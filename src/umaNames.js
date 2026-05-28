@@ -126,9 +126,6 @@ export const UMA_NAMES = [
   "黄金旅程",
   "神业",
   "比萨胜驹",
-  "测试小马娘A",
-  "测试小马娘B",
-  "测试小马娘C",
 ];
 
 /** Full list with birthday info (MM/DD format). */
