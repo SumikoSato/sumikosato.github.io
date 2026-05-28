@@ -22,7 +22,7 @@ body {
   position: relative;
 }
 
-body::after {
+body[data-theme="digiPattern"]::after {
   content: "";
   position: fixed;
   inset: 0;
@@ -372,6 +372,33 @@ select {
   opacity: 0.7;
 }
 
+.fab__themeSelect {
+  font-size: 12px;
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.themeModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.themeModalBody .fab__themeSelect {
+  width: 100%;
+}
+
+.themeDesc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.5;
+}
+
 .pageFooter {
   text-align: center;
   margin-top: 32px;
@@ -388,4 +415,30 @@ select {
 
 .pageFooter a:hover {
   text-decoration: underline;
+}
+
+/* ── Event Banner ─────────────────────────────────────── */
+body:has(.eventBanner) {
+  padding-top: 42px;
+}
+
+.eventBanner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(180deg, #98D94A 0%, #5EA820 100%);
+  box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4);
+  animation: eventGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes eventGlow {
+  from { box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4); }
+  to   { box-shadow: 0 2px 20px rgba(152, 217, 74, 0.6); }
 }

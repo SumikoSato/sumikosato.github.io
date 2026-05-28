@@ -1,4 +1,6 @@
 import { getSoundEnabled, setSoundEnabled } from "./storage.js";
+import { applyTheme, getThemeId, setThemeId, getThemeList, getThemeDesc } from "./theme.js";
+import { ACHIEVEMENTS, getUnlockedIds, unlockAchievement } from "./achievements.js";
 
 const app = document.getElementById("app");
 
@@ -34,12 +36,43 @@ function makeCard(titleText) {
 }
 
 let dispatchAction = null;
+let __uiScreen = null; // overlay screen (e.g. "achievements"), takes priority over game screens
+let __konamiRevealed = false;
+let __konamiIndex = 0;
+
+const KONAMI_SEQ = [
+  "arrowup","arrowup","arrowdown","arrowdown",
+  "arrowleft","arrowright","arrowleft","arrowright",
+  "b","a",
+];
+const KONAMI_ALT = [
+  "w","w","s","s",
+  "a","d","a","d",
+  "j","k",
+];
+
+// Register Konami listener once at module load
+document.addEventListener("keydown", (e) => {
+  if (__uiScreen !== "achievements") return;
+  const key = e.key.toLowerCase();
+  if (key === KONAMI_SEQ[__konamiIndex] || key === KONAMI_ALT[__konamiIndex]) {
+    __konamiIndex++;
+    if (__konamiIndex >= KONAMI_SEQ.length) {
+      __konamiIndex = 0;
+      __konamiRevealed = true;
+      unlockAchievement("konami_code");
+      render(window.__latestState);
+    }
+  } else {
+    __konamiIndex = 0;
+  }
+});
 
 export function bindUI({ onAction }) {
   dispatchAction = onAction;
 }
 
-export function setModal(open, { title, body, htmlBody, confirmLabel, cancelLabel, onConfirm } = {}) {
+export function setModal(open, { title, body, htmlBody, confirmLabel, cancelLabel, onConfirm, actions, confirmDisabledMs } = {}) {
   let overlay = document.getElementById("modalOverlay");
   if (!overlay) {
     overlay = document.createElement("div");
@@ -51,26 +84,53 @@ export function setModal(open, { title, body, htmlBody, confirmLabel, cancelLabe
   overlay.classList.toggle("open", open);
   if (!open) return;
 
-  const btnConfirm = el("button", {
-    className: "primary",
-    text: confirmLabel || "确认",
-    onclick: () => {
-      if (onConfirm) {
-        onConfirm();
-      } else {
-        dispatchAction && dispatchAction("modal_confirm");
-      }
-    },
-  });
-
-  const btnRow = [btnConfirm];
-  if (cancelLabel) {
-    btnRow.unshift(
+  // Support custom actions array, or fall back to confirm/cancel
+  let btnRow;
+  if (actions && actions.length > 0) {
+    btnRow = actions.map((a) =>
       el("button", {
-        text: cancelLabel,
-        onclick: () => setModal(false),
+        className: a.className || "",
+        text: a.label,
+        onclick: () => {
+          setModal(false);
+          if (a.onClick) a.onClick();
+        },
       }),
     );
+  } else {
+    const btnConfirm = el("button", {
+      className: "primary",
+      text: confirmLabel || "确认",
+      onclick: () => {
+        if (onConfirm) {
+          onConfirm();
+        } else {
+          dispatchAction && dispatchAction("modal_confirm");
+        }
+      },
+    });
+    if (confirmDisabledMs > 0) {
+      btnConfirm.disabled = true;
+      setTimeout(() => { btnConfirm.disabled = false; }, confirmDisabledMs);
+    }
+    btnRow = [btnConfirm];
+    if (cancelLabel) {
+      btnRow.unshift(
+        el("button", {
+          text: cancelLabel,
+          onclick: () => setModal(false),
+        }),
+      );
+    }
+  }
+
+  const modalBody = el("div", { className: "modalBody" });
+  if (htmlBody) {
+    modalBody.innerHTML = htmlBody;
+  } else if (body instanceof Node) {
+    modalBody.appendChild(body);
+  } else {
+    modalBody.textContent = body || "";
   }
 
   const modal = el("div", { className: "modal" }, [
@@ -78,7 +138,7 @@ export function setModal(open, { title, body, htmlBody, confirmLabel, cancelLabe
       el("h3", { text: title || "" }),
     ]),
     el("div", { className: "modalContent" }, [
-      el("div", { className: "modalBody", [htmlBody ? "html" : "text"]: htmlBody || body || "" }),
+      modalBody,
       el("div", { className: "controls", style: "justify-content:flex-end; margin-top:14px;" }, btnRow),
     ]),
   ]);
@@ -106,6 +166,13 @@ function appendFooter(container) {
     text: "2025-2026 爱丽数位装备社 文案版权所有",
   });
 
+const GitHubLink = el("a", {
+    href: "https://github.com/SumikoSato/sumikosato.github.io",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    text: "前往GitHub仓库>>",
+  });
+  
   const aiLink = el("a", {
     href: "#",
     text: "本网页使用生成式人工智能技术辅助开发，了解详情>>",
@@ -121,12 +188,12 @@ function appendFooter(container) {
 
   const versionLink = el("a", {
     href: "#",
-    text: "版本号：UmaFesSimulator 26.5.15 爱丽数码生日纪念版",
+    text: "版本号：UmaFesSimulator 26.5.28 稳定版",
     onclick: (e) => {
       e.preventDefault();
       setModal(true, {
         title: "更新日志",
-        body: "UmaFesSimulator 26.5.15 爱丽数码生日纪念版 更新内容\n——让我们祝特雷森学园同人作者、超级喜欢赛马娘、泥地草地全能、社团的代表赛马娘，爱丽数码生日快乐！我们添加了爱丽数码专属生日主题\n——恭喜橙子果酱终于会用Git做版本管理了，可喜可贺\n——全新辅助功能菜单，加入日志一键保存功能\n——事件概率调整，添加动态概率机制 感谢 @小何\n——添加负面事件掷骰子对决玩法 感谢 @南昌赛马娘Only群的匿名网友\n——启用自定义域名和CDN\n——调整数值平衡\n——可自定义性别，将选择还给用户 感谢 @草酸\n——加入自动弹窗添加社团群组的彩蛋 感谢 @草酸\n——优化coser/游客分支路线的提示 感谢 @Sara喵酱\n——彩蛋逻辑更改，现在你不会错过彩蛋了\n——增加节目会自动播放音乐的功能",
+        body: "UmaFesSimulator 26.5.28 稳定版 更新内容\n——因为作者在考研的原因，所以今年的更新暂且到这里结束了\n——商店功能重构，现在可以自由选择cos服装进行购买。\n——新增主题选择，辅助功能菜单中加入主题切换功能。\n——增加大量的痛车车型\n——全新成就系统，等你来战\n——进度恢复功能，刷新或每次进入网页后，若之前的游戏进度没有在游戏主页，则弹出窗口供确认。\n——新增赛马娘生日Banner功能\n——增加了一些新的彩蛋",
         confirmLabel: "我知道了",
       });
     },
@@ -154,6 +221,7 @@ function appendFooter(container) {
   container.appendChild(
     el("div", { className: "pageFooter" }, [
       el("div", {}, [copyrightLink]),
+      el("div", {}, [GitHubLink]),
       el("div", {}, [aiLink]),
       el("div", {}, [versionLink]),
       el("div", {}, [historyLink]),
@@ -164,6 +232,50 @@ function appendFooter(container) {
 export function render(state) {
   if (!app) return;
   app.innerHTML = "";
+  window.__latestState = state;
+
+  /* ── Achievements overlay ─────────────────────────── */
+  if (__uiScreen === "achievements") {
+    const { card, body } = makeCard("成就");
+    const unlocked = getUnlockedIds();
+    const revealed = __konamiRevealed;
+    ACHIEVEMENTS.forEach((ach, i) => {
+      const got = unlocked.has(ach.id);
+      const show = got || revealed;
+      const row = el("div", { style: "display:flex;align-items:flex-start;justify-content:space-between;padding:12px 0;" }, [
+        el("div", { style: "flex:1;min-width:0;" }, [
+          el("p", { style: `margin:0;font-weight:600;${show ? "" : "color:var(--text-sub);"}`, text: show ? ach.title : "？？？" }),
+          el("p", { style: `margin:4px 0 0;${show ? "" : "color:var(--text-sub);"}`, text: show ? ach.desc : "？？？" }),
+          el("p", { style: "margin:4px 0 0;font-size:0.85em;color:var(--text-sub);", text: ach.howToGet }),
+        ]),
+        el("span", {
+          style: `margin-left:12px;white-space:nowrap;font-size:0.85em;color:${got ? "var(--green-dark)" : "var(--text-sub)"};`,
+          text: got ? "已解锁" : "未解锁",
+        }),
+      ]);
+      if (i > 0) {
+        body.appendChild(el("hr", { style: "border:none;border-top:1px solid var(--border);margin:0;" }));
+      }
+      body.appendChild(row);
+    });
+    body.appendChild(
+      el("div", { className: "controls", style: "margin-top:16px;" }, [
+        el("button", {
+          className: "primary",
+          text: "返回",
+          onclick: () => {
+            __uiScreen = null;
+            __konamiRevealed = false;
+            __konamiIndex = 0;
+            render(window.__latestState);
+          },
+        }),
+      ]),
+    );
+    app.appendChild(card);
+    appendFooter(app);
+    return;
+  }
 
   if (!state || !state.screen) {
     const { card, body } = makeCard("加载中");
@@ -187,6 +299,10 @@ export function render(state) {
           className: "primary",
           text: "开始游戏",
           onclick: () => dispatchAction && dispatchAction("start_role_select"),
+        }),
+        el("button", {
+          text: "查看成就",
+          onclick: () => { __uiScreen = "achievements"; render(state); },
         }),
       ]),
     );
@@ -277,6 +393,28 @@ export function render(state) {
           onclick: () => dispatchAction && dispatchAction("enter_game"),
         }),
       );
+      if ((state.rerollCount ?? 0) >= 10 && !state.derDismissed) {
+        controls.appendChild(
+          el("button", {
+            text: "想买车做痛车？",
+            onclick: () => {
+              window.__playSfx && window.__playSfx("./sound/der.x7");
+              unlockAchievement("buy_a_der");
+              setModal(true, {
+                title: "你买个Der！",
+                body: "你这个情况，你买个车，贴个车膜然后全国漫展来回跑，获得所谓的认可，你认可个Der？你该没钱还是没钱，该难受还是难受，追求什么二次元？你现在二十多岁最美好的年纪，最应该做的事情就是积累财富，而不是买个破车在你的小圈子里炫耀，你买个Der！",
+                confirmLabel: "听超哥的，不买！",
+                confirmDisabledMs: 3000,
+                onConfirm: () => {
+                  setModal(false);
+                  window.__stopSfx && window.__stopSfx();
+                  dispatchAction && dispatchAction("dismiss_der");
+                },
+              });
+            },
+          }),
+        );
+      }
     }
     body.appendChild(controls);
     app.appendChild(card);
@@ -455,6 +593,7 @@ export function render(state) {
       cancelLabel: "取消",
       onConfirm: () => {
         localStorage.removeItem("maoOnly_textAdventure_save_v1");
+        localStorage.removeItem("maoOnly_textAdventure_dismissRestore");
         location.href = location.pathname + "?nocache=" + Date.now();
       },
     });
@@ -476,6 +615,52 @@ export function render(state) {
     hideBtn.textContent = hidden ? "隐藏UI" : "显示UI";
   });
   menu.appendChild(hideBtn);
+
+  // 主题切换
+  const themeBtn = document.createElement("button");
+  themeBtn.className = "fab__item";
+  themeBtn.textContent = "切换主题";
+  themeBtn.addEventListener("click", () => {
+    wrapper.classList.remove("fab--open");
+    const themes = getThemeList();
+    const currentId = getThemeId();
+
+    const selectEl = document.createElement("select");
+    selectEl.className = "fab__themeSelect";
+    for (const t of themes) {
+      const o = document.createElement("option");
+      o.value = t.id;
+      o.textContent = t.label;
+      selectEl.appendChild(o);
+    }
+    selectEl.value = currentId;
+
+    const descEl = document.createElement("p");
+    descEl.className = "themeDesc";
+    descEl.textContent = getThemeDesc(currentId);
+
+    selectEl.addEventListener("change", () => {
+      descEl.textContent = getThemeDesc(selectEl.value);
+    });
+
+    const bodyEl = document.createElement("div");
+    bodyEl.className = "themeModalBody";
+    bodyEl.appendChild(selectEl);
+    bodyEl.appendChild(descEl);
+
+    setModal(true, {
+      title: "切换主题",
+      body: bodyEl,
+      confirmLabel: "好",
+      cancelLabel: "取消",
+      onConfirm: () => {
+        const id = selectEl.value;
+        setThemeId(id);
+        applyTheme(id);
+      },
+    });
+  });
+  menu.appendChild(themeBtn);
 
   // Sound toggle button
   const soundBtn = document.createElement("button");

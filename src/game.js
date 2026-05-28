@@ -1,5 +1,6 @@
 import { bindUI, render, setModal } from "./ui.js";
 import { clearGame, loadGame, saveGame, getSoundEnabled } from "./storage.js";
+import { unlockAchievement } from "./achievements.js";
 import {
   COSPLAY_POOL,
   COLLEGE_TEMPLATE,
@@ -10,9 +11,13 @@ import {
   PAIN_CAR_MODELS_OFFICE,
   PAIN_CAR_MODELS_UNIVERSITY,
   PHONE_MODELS,
+  UMA_BIRTHDAYS,
   getHotelEnergyDelta,
 } from "./storyData.js";
+import { CAR_MODELS, getCarLabel } from "./car.js";
+import { UMA_NAMES } from "./umaNames.js";
 import { clamp, formatTimeHHMM, randInt, weightedPick } from "./utils.js";
+import { applyTheme, getThemeId } from "./theme.js";
 
 function clamp01to100(n) {
   return clamp(n, 0, 100);
@@ -20,7 +25,9 @@ function clamp01to100(n) {
 
 // ── Audio management ─────────────────────────────────
 let currentBgm = null;
-let currentBlobUrl = null;
+let currentBgmBlobUrl = null;
+let currentSfx = null;
+let currentSfxBlobUrl = null;
 
 export async function playBgm(src) {
   stopBgm();
@@ -30,11 +37,38 @@ export async function playBgm(src) {
     if (!resp.ok) { console.warn("playBgm fetch failed:", resp.status, src); return; }
     const buf = await resp.arrayBuffer();
     const blob = new Blob([buf], { type: "audio/mpeg" });
-    currentBlobUrl = URL.createObjectURL(blob);
-    currentBgm = new Audio(currentBlobUrl);
+    currentBgmBlobUrl = URL.createObjectURL(blob);
+    currentBgm = new Audio(currentBgmBlobUrl);
     currentBgm.loop = true;
     await currentBgm.play();
   } catch (e) { console.warn("playBgm error:", e); }
+}
+
+export async function playSfx(src) {
+  stopSfx();
+  if (!getSoundEnabled()) return;
+  try {
+    const resp = await fetch(src);
+    if (!resp.ok) { console.warn("playSfx fetch failed:", resp.status, src); return; }
+    const buf = await resp.arrayBuffer();
+    const blob = new Blob([buf], { type: "audio/mpeg" });
+    currentSfxBlobUrl = URL.createObjectURL(blob);
+    currentSfx = new Audio(currentSfxBlobUrl);
+    currentSfx.addEventListener("ended", () => { stopSfx(); });
+    await currentSfx.play();
+  } catch (e) { console.warn("playSfx error:", e); }
+}
+
+function stopSfx() {
+  if (currentSfx) {
+    try { currentSfx.pause(); } catch { /* ignore */ }
+    currentSfx.currentTime = 0;
+    currentSfx = null;
+  }
+  if (currentSfxBlobUrl) {
+    URL.revokeObjectURL(currentSfxBlobUrl);
+    currentSfxBlobUrl = null;
+  }
 }
 
 export function stopBgm() {
@@ -43,13 +77,16 @@ export function stopBgm() {
     currentBgm.currentTime = 0;
     currentBgm = null;
   }
-  if (currentBlobUrl) {
-    URL.revokeObjectURL(currentBlobUrl);
-    currentBlobUrl = null;
+  if (currentBgmBlobUrl) {
+    URL.revokeObjectURL(currentBgmBlobUrl);
+    currentBgmBlobUrl = null;
   }
+  stopSfx();
 }
 // Expose for ui.js (avoid circular import)
 window.__stopBgm = stopBgm;
+window.__stopSfx = stopSfx;
+window.__playSfx = playSfx;
 
 const AUDIO_MAP = {
   zoomZoom: "./sound/f7a3e2b1.x7",
@@ -64,6 +101,7 @@ const AUDIO_MAP = {
 function requireMoneyOrModal(state, cost) {
   const money = state?.run?.money ?? 0;
   if (money >= cost) return true;
+  unlockAchievement("money");
   setModal(true, { title: "提示", body: "金钱不足", confirmLabel: "确认" });
   return false;
 }
@@ -433,16 +471,24 @@ function enterPhaseD14(state) {
 }
 
 function enterShopTaobao(state) {
+  // 随机抽取4个cos服（排除已拥有的）
+  const owned = new Set(state.run?.wardrobeCosplays || []);
+  const pool = COSPLAY_POOL.filter((n) => !owned.has(n));
+  const picks = sampleWithoutReplacement(pool, 4, Math.random);
+  state.run.shopCosOptions = picks;
+
   return setGameNode(state, {
     nodeId: "shop_taobao",
     title: "掏宝商城",
     text:
       "欢迎来到掏宝商城，这里你能买到各种各样的cos服，种类齐全，价格实惠。",
     choices: [
-      { choiceId: "buy_cos_kes", label: "购买凯斯奇迹cos服*1（金钱-500）", primary: true },
-      { choiceId: "buy_cos_zhongshan", label: "购买中山庆典cos服*1（金钱-500）" },
-      { choiceId: "buy_cos_tokai", label: "购买东海帝皇cos服*1（金钱-500）" },
-      { choiceId: "buy_cos_love", label: "购买爱如往昔cos服*1（金钱-500）" },
+      ...picks.map((name, i) => ({
+        choiceId: `buy_cos_${i}`,
+        label: `购买 ${name} cos服*1（金钱-500）`,
+        primary: i === 0,
+      })),
+      { choiceId: "shop_taobao_reroll", label: "刷新商店" },
       { choiceId: "shop_taobao_skip", label: "还是算了" },
     ],
   });
@@ -718,6 +764,7 @@ function enterPhaseMorning(state) {
 function enterEventToMakeup(state) {
   // 1/30 chance: makeup artist runs away
   if (Math.random() < 1 / 30) {
+    unlockAchievement("makeup_run");
     return setGameNode(state, {
       nodeId: "event_makeup_runaway",
       title: "妆娘跑路了！",
@@ -879,8 +926,8 @@ function enterEventWind(state) {
   return setGameNode(state, {
     nodeId: "event_wind",
     title: "风平浪静",
-    text: "你在地铁上很幸运地没有受到异样的眼光，安全抵达了现场。",
-    choices: [{ choiceId: "wind_get_off", label: "下车", primary: true }],
+    text: "你在路上很幸运地没有受到异样的眼光，安全抵达了现场。",
+    choices: [{ choiceId: "wind_get_off", label: "进入地点", primary: true }],
   });
 }
 
@@ -1057,11 +1104,14 @@ function resolveExhibitionEventVariant(state, eventId) {
 
   if (eventId === "paincar_approved") {
     if (!selfDrive) {
+      const painCar = CAR_MODELS[randInt(0, CAR_MODELS.length - 1)];
+      const painCarLabel = getCarLabel(painCar.id);
+      const painUma = UMA_NAMES[randInt(0, UMA_NAMES.length - 1)];
       return {
         nodeId: "ex_paincar_unapproved",
         title: "这车真帅吧",
         text:
-          "你看到了一辆奥迪S4的凯斯奇迹痛车，非常喜欢。你对车主表达了赞叹，并想要拍一张照片。",
+          `你看到了一辆${painCarLabel}的${painUma}痛车，非常喜欢。你对车主表达了赞叹，并想要拍一张照片。`,
         choices: [
           { choiceId: "ex_pain_btn1", label: "拍照并递上周边（认可度+5，周边数量-1）", primary: true, requiresBadges: 1 },
           { choiceId: "ex_pain_btn2", label: "拍照（认可度+1）" },
@@ -1127,6 +1177,7 @@ function resolveExhibitionEventVariant(state, eventId) {
     if (!good || state.run.flags.easterHasPinUsed) return wind;
     state.run.flags.easterHasPinUsed = true;
     state.pixelMissCount = 0;
+    unlockAchievement("pixel");
     return {
       nodeId: "ex_has_pin",
       title: "有品！",
@@ -1143,6 +1194,7 @@ function resolveExhibitionEventVariant(state, eventId) {
     if (!ok || state.run.flags.easterZoomZoomUsed) return wind;
     state.run.flags.easterZoomZoomUsed = true;
     state.zoomMissCount = 0;
+    unlockAchievement("mazda");
     return {
       nodeId: "ex_zoom_zoom",
       title: "Zoom-Zoom",
@@ -1252,6 +1304,8 @@ function dispatch(actionId, ctx = {}) {
       state.nodeText = "";
       state.choices = [];
       state.select = null;
+      state.rerollCount = 0;
+      state.derDismissed = false;
       saveGame(state);
       render(state);
     }
@@ -1260,6 +1314,7 @@ function dispatch(actionId, ctx = {}) {
 
   if (state.screen === "roleSelect") {
     if (actionId === "roll_role" || actionId === "roll_role_again") {
+      if (actionId === "roll_role_again") state.rerollCount = (state.rerollCount ?? 0) + 1;
       const genderVal = state.genderSelect ?? 0;
       state.role = createRoleSelection(genderVal, Math.random);
       saveGame(state);
@@ -1272,12 +1327,19 @@ function dispatch(actionId, ctx = {}) {
       saveGame(state);
       render(state);
     }
+    if (actionId === "dismiss_der") {
+      state.derDismissed = true;
+      saveGame(state);
+      render(state);
+    }
     if (actionId === "enter_game") {
       if (!state.role?.frozen) return;
       if (state.genderSelect == null) {
+        unlockAchievement("walmart_bag");
         setModal(true, { title: "错误", body: "您还未选择性别，请选择一个性别来继续游戏。", confirmLabel: "好" });
         return;
       }
+      stopBgm();
       state.run = createRunStateFromRole(state.role);
       state.energy = null;
       state.recognition = null;
@@ -1318,24 +1380,13 @@ function dispatch(actionId, ctx = {}) {
 
       case "shop_taobao":
         if (actionId === "shop_taobao_skip") return enterPhaseD10(state);
-        if (
-          actionId === "buy_cos_kes" ||
-          actionId === "buy_cos_zhongshan" ||
-          actionId === "buy_cos_tokai" ||
-          actionId === "buy_cos_love"
-        ) {
+        if (actionId === "shop_taobao_reroll") return enterShopTaobao(state);
+        if (actionId.startsWith("buy_cos_")) {
+          const idx = parseInt(actionId.replace("buy_cos_", ""), 10);
+          const name = state.run.shopCosOptions?.[idx];
+          if (!name) break;
           if (!requireMoneyOrModal(state, 500)) return;
-        }
-        if (actionId === "buy_cos_kes") state.run.wardrobeCosplays.push("凯斯奇迹");
-        if (actionId === "buy_cos_zhongshan") state.run.wardrobeCosplays.push("中山庆典");
-        if (actionId === "buy_cos_tokai") state.run.wardrobeCosplays.push("东海帝皇");
-        if (actionId === "buy_cos_love") state.run.wardrobeCosplays.push("爱如往昔");
-        if (
-          actionId === "buy_cos_kes" ||
-          actionId === "buy_cos_zhongshan" ||
-          actionId === "buy_cos_tokai" ||
-          actionId === "buy_cos_love"
-        ) {
+          state.run.wardrobeCosplays.push(name);
           state.run.money -= 500;
           return enterPhaseD10(state);
         }
@@ -1597,6 +1648,7 @@ function dispatch(actionId, ctx = {}) {
         if (actionId === "not_man_woman_explain") {
           const hit = Math.random() < 0.5;
           if (hit) {
+            unlockAchievement("super_brave");
             return setGameNode(state, {
               nodeId: "event_do_whatever",
               title: "干什么！",
@@ -1626,6 +1678,7 @@ function dispatch(actionId, ctx = {}) {
         if (actionId === "man_flirt_refuse") {
           const hit = Math.random() < 0.5;
           if (hit) {
+            unlockAchievement("heroine");
             return setGameNode(state, {
               nodeId: "event_brave_no",
               title: "勇敢说不",
@@ -1993,50 +2046,77 @@ function dispatch(actionId, ctx = {}) {
   }
 }
 
-async function initBgPattern() {
-  const W = 240, H = 320;
-  const dpr = window.devicePixelRatio || 1;
-  try {
-    const [b1, b2] = await Promise.all(
-      ["./pic/digi1.png", "./pic/digi2.png"].map(async (src) => {
-        const r = await fetch(src);
-        return URL.createObjectURL(await r.blob());
-      }),
-    );
-    const [img1, img2] = await Promise.all(
-      [b1, b2].map(
-        (u) =>
-          new Promise((res, rej) => {
-            const i = new Image();
-            i.onload = () => res(i);
-            i.onerror = rej;
-            i.src = u;
-          }),
-      ),
-    );
-    URL.revokeObjectURL(b1);
-    URL.revokeObjectURL(b2);
-    const cols = Math.ceil(window.innerWidth / W) + 1;
-    const rows = Math.ceil(window.innerHeight / H) + 1;
-    const c = document.createElement("canvas");
-    c.width = cols * W * dpr;
-    c.height = rows * H * dpr;
-    const ctx = c.getContext("2d");
-    ctx.scale(dpr, dpr);
-    for (let r = 0; r < rows; r++)
-      for (let cl = 0; cl < cols; cl++)
-        ctx.drawImage((r + cl) % 2 === 0 ? img1 : img2, cl * W, r * H, W, H);
-    document.body.style.backgroundImage = `url(${c.toDataURL()})`;
-    document.body.style.backgroundSize = `${cols * W}px ${rows * H}px`;
-    document.body.style.backgroundRepeat = "repeat";
-  } catch (e) { console.warn("initBgPattern failed:", e); }
+function showBirthdayBanner() {
+  const now = new Date();
+  const today = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}`;
+  const birthdayGirls = UMA_BIRTHDAYS.filter((u) => u.bday === today);
+  if (birthdayGirls.length === 0) return;
+
+  const names = birthdayGirls.map((u) => u.name).join("、");
+  const banner = document.createElement("div");
+  banner.className = "eventBanner";
+  banner.innerHTML = `🎂 今天是赛马娘 ${names} 的生日，让我们祝她生日快乐！ 🎂`;
+  document.body.insertBefore(banner, document.body.firstChild);
+}
+
+function showAnniversaryBanner() {
+  const now = new Date();
+  const today = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}`;
+  if (today !== "06/25") return;
+
+  const banner = document.createElement("div");
+  banner.className = "eventBanner";
+  banner.innerHTML = `🎉 今天是爱丽数位装备社的成立纪念日！ 🎉`;
+  document.body.insertBefore(banner, document.body.firstChild);
 }
 
 function init() {
-  initBgPattern();
+  applyTheme(getThemeId());
+  showBirthdayBanner();
+  showAnniversaryBanner();
   bindUI({ onAction: dispatch });
-  let state = loadGame();
-  if (!state) state = createDefaultState();
+
+  const DISMISS_KEY = "maoOnly_textAdventure_dismissRestore";
+  const savedState = loadGame();
+  const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
+
+  if (savedState && !dismissed) {
+    // 有存档且未被永久关闭：先显示主菜单，再弹窗询问
+    const defaultState = createDefaultState();
+    window.__maoState = defaultState;
+    render(defaultState);
+
+    setModal(true, {
+      title: "要恢复进度吗",
+      body: "检测到您之前的游玩被中断，从存档恢复进度还是重新开始游戏？",
+      actions: [
+        {
+          label: "恢复进度",
+          className: "primary",
+          onClick: () => {
+            window.__maoState = savedState;
+            render(savedState);
+          },
+        },
+        {
+          label: "重新开始",
+          onClick: () => {
+            // 什么都不做，已在主菜单
+          },
+        },
+        {
+          label: "关闭且不再提示",
+          onClick: () => {
+            localStorage.setItem(DISMISS_KEY, "1");
+          },
+        },
+      ],
+    });
+    return;
+  }
+
+  // 无存档 / 已永久关闭：正常加载
+  let state = savedState || createDefaultState();
 
   // minimal migration / guards
   if (!state.screen) state = createDefaultState();

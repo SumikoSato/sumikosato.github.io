@@ -1,18 +1,25 @@
 // Static data + story text.
 // Keep it as pure data as much as possible; dynamic effects handled in game.js.
 
-export const GAME_VERSION = "26.5.15";
+import { UMA_NAMES, UMA_BIRTHDAYS } from "./umaNames.js";
+export { UMA_BIRTHDAYS };
+export {
+  PAIN_CAR_MODELS_UNIVERSITY,
+  PAIN_CAR_MODELS_OFFICE,
+} from "./car.js";
+
+export const GAME_VERSION = "26.5.28";
 
 export const PHONE_MODELS = [
-  { id: "GooglePixel6Pro", label: "Google Pixel 6 Pro", weight: 1, template: "高中生" },
+  { id: "GooglePixel6Pro", label: "Google Pixel 6 Pro", weight: 5, template: "高中生" },
   { id: "IPhoneSE2", label: "iPhone SE2", weight: 9, template: "高中生" },
   { id: "RedmiNote11", label: "Redmi Note 11", weight: 90, template: "高中生" },
 
-  { id: "GooglePixel7a", label: "Google Pixel 7a", weight: 1, template: "大学生" },
+  { id: "GooglePixel7a", label: "Google Pixel 7a", weight: 5, template: "大学生" },
   { id: "IPhone15Plus", label: "iPhone 15 Plus", weight: 39, template: "大学生" },
   { id: "RedmiK70Pro", label: "Redmi K70 Pro", weight: 60, template: "大学生" },
 
-  { id: "GooglePixel10ProXL", label: "Google Pixel 10 Pro XL", weight: 1, template: "社畜" },
+  { id: "GooglePixel10ProXL", label: "Google Pixel 10 Pro XL", weight: 5, template: "社畜" },
   { id: "IPhone17ProMax", label: "iPhone 17 Pro Max", weight: 49, template: "社畜" },
   { id: "OPPOFindX8Ultra", label: "OPPO Find X8 Ultra", weight: 50, template: "社畜" },
 ];
@@ -21,172 +28,8 @@ export const HIGH_SCHOOL_TEMPLATE = "high_school";
 export const COLLEGE_TEMPLATE = "college";
 export const OFFICE_TEMPLATE = "office";
 
-// Cosplay pool: reuse the provided list (painCar and cosplay style share the same names).
-export const COSPLAY_POOL = [
-  "特别周",
-  "无声铃鹿",
-  "东海帝皇",
-  "丸善斯基",
-  "富士奇迹",
-  "小栗帽",
-  "黄金船",
-  "伏特加",
-  "大和赤骥",
-  "大树快车",
-  "草上飞",
-  "菱亚马逊",
-  "目白麦昆",
-  "神鹰",
-  "好歌剧",
-  "成田白仁",
-  "鲁道夫象征",
-  "气槽",
-  "爱丽数码",
-  "青云天空",
-  "玉藻十字",
-  "美妙姿势",
-  "琵琶晨光",
-  "摩耶重炮",
-  "曼城茶座",
-  "美浦波旁",
-  "目白赖恩",
-  "菱曙",
-  "雪之美人",
-  "米浴",
-  "艾尼斯风神",
-  "爱丽速子",
-  "爱慕织姬",
-  "稻荷一",
-  "胜利奖券",
-  "空中神宫",
-  "荣进闪耀",
-  "真机伶",
-  "川上公主",
-  "黄金城",
-  "樱花进王",
-  "采珠",
-  "新光风",
-  "超级小海湾",
-  "醒目飞鹰",
-  "荒漠英雄",
-  "东瀛佐敦",
-  "中山庆典",
-  "成田大进",
-  "西野花",
-  "春乌拉拉",
-  "青竹回忆",
-  "微光飞驹",
-  "美丽周日",
-  "待兼福来",
-  "千明代表",
-  "名将怒涛",
-  "目白多伯",
-  "优秀素质",
-  "帝王光辉",
-  "待兼诗歌剧",
-  "生野狄杜斯",
-  "目白善信",
-  "大拓太阳神",
-  "双涡轮",
-  "里见光钻",
-  "北部玄驹",
-  "樱花千代王",
-  "天狼星象征",
-  "目白阿尔丹",
-  "八重无敌",
-  "鹤丸刚志",
-  "目白光明",
-  "樱花桂冠",
-  "成田路",
-  "也文摄辉",
-  "狂怒乐章",
-  "创升",
-  "希望之城",
-  "北方飞翔",
-  "吉兆",
-  "谷水琴蕾",
-  "第一红宝石",
-  "目白高峰",
-  "真弓快车",
-  "里见皇冠",
-  "高尚骏逸",
-  "极峰",
-  "强击",
-  "烈焰快驹",
-  "凯斯奇迹",
-  "森林宝穴",
-  "信念",
-  "莫名其妙",
-  "爱如往昔",
-  "小林历奇",
-  "北港火山",
-  "奇锐骏",
-  "万籁争鸣",
-  "莱斯莱斯",
-  "葛城王牌",
-  "新宇宙",
-  "菱钻奇宝",
-  "跳舞城",
-  "大鸣大放",
-  "莱茵力量",
-  "西沙里奥",
-  "空中救世主",
-  "房一潘多拉",
-  "迷人景致",
-  "黄金巨匠",
-  "贵妇人",
-  "凯旋芭蕾",
-  "梦之旅",
-  "金镇之光",
-  "多旺达",
-  "吹波糖",
-  "超常骏骥",
-  "杏目",
-  "放声欢呼",
-  "唯独爱你",
-  "创世驹",
-  "黄金旅程",
-  "神业",
-  "比萨胜驹",
-];
-
-export const PAIN_CAR_MODELS_UNIVERSITY = [
-  { id: "none", label: "无", weight: 90 },
-  { id: "DongnanV3", label: "东南 V3菱悦", weight: 5 },
-  { id: "Mazda6", label: "一汽轿车 马自达6", weight: 4 },
-  { id: "AudiA6L_C6", label: "一汽奥迪 A6L（C6）", weight: 1 },
-];
-
-export const PAIN_CAR_MODELS_OFFICE = [
-  { id: "none", label: "无", weight: 50 },
-  { id: "LingaYu", label: "上汽大众 凌渡L GTS 380TSI", weight: 20 },
-  { id: "Mazda3_Axela", label: "长安 马自达3 次世代昂克赛拉", weight: 29 },
-  { id: "AudiA6L_C8", label: "一汽奥迪 A6L（C8）", weight: 1 },
-];
-
-export const PAIN_CAR_MODELS_SOCIAL = [
-  { id: "none", label: "无", weight: 50 },
-  { id: "Lingdu", label: "凌渡L", weight: 20 },
-  { id: "Mazda6_Alt", label: "一汽轿车 马自达6", weight: 2 }, // not used by spec but keep structure
-  { id: "Mazda6_Alt2", label: "一汽轿车 马自达6", weight: 0 }, // placeholder to avoid confusion
-];
-
-// Social template spec car list:
-export const PAIN_CAR_MODELS_SOCIAL_SPEC = [
-  { id: "none", label: "无", weight: 50 },
-  { id: "Lingdu", label: "上汽大众 凌渡L GTS 380TSI", weight: 20 }, // spec doesn't match car; keep as label? overwritten in game.js
-  { id: "Mazda3_Social", label: "长安 马自达3 次世代昂克赛拉", weight: 29 }, // spec mismatch; overwritten in game.js
-  { id: "AudiA6L_C6_social", label: "一汽奥迪 A6L（C6）", weight: 1 }, // spec mismatch; overwritten in game.js
-];
-
-export const PAIN_CAR_MODELS_SOCIAL_SPEC_CORRECT = [
-  // University spec is specific; Office spec is specific.
-  // For "大学生/社畜之外" the prompt includes only the two lists in role templates:
-  // - 大学生 pain car options are 东南V3/马自达6/奥迪A6L(C6)
-  // - 社畜 pain car options are 凌渡L GTS/Axela/AudiA6L(C8)
-  // The user story says “痛车存在” checks only for templates.
-  // So for non-university/non-office we don't need an extra list beyond these two.
-];
+// Cosplay pool: sourced from lib/umalist.csv via umaNames.js.
+export const COSPLAY_POOL = UMA_NAMES;
 
 export const COSPLAY_TEMPLATE_ORDER = "cos_clothes_then_phone_then_pain_car_then_pain_style";
 
