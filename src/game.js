@@ -89,12 +89,12 @@ window.__stopSfx = stopSfx;
 window.__playSfx = playSfx;
 
 const AUDIO_MAP = {
-  zoomZoom: "./sound/mazda.x7",
+  zoomZoom: "./sound/mazda.mp3",
   umaTracks: [
-    "./sound/uma/4c8d1e6a.x7",
-    "./sound/uma/9b2f5c73.x7",
-    "./sound/uma/d1e4a8f6.x7",
-    "./sound/uma/umapyoi.x7",
+    "./sound/uma/4c8d1e6a.mp3",
+    "./sound/uma/9b2f5c73.mp3",
+    "./sound/uma/d1e4a8f6.mp3",
+    "./sound/uma/umapyoi.mp3",
   ],
 };
 

@@ -398,7 +398,7 @@ export function render(state) {
           el("button", {
             text: "想买车做痛车？",
             onclick: () => {
-              window.__playSfx && window.__playSfx("./sound/der.x7");
+              window.__playSfx && window.__playSfx("./sound/der.mp3");
               unlockAchievement("buy_a_der");
               setModal(true, {
                 title: "你买个Der！",
