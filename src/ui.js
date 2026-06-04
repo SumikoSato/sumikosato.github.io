@@ -188,12 +188,12 @@ const GitHubLink = el("a", {
 
   const versionLink = el("a", {
     href: "#",
-    text: "版本号：UmaFesSimulator 26.5.28 稳定版",
+    text: "版本号：UmaFesSimulator 26.6.4 稳定版",
     onclick: (e) => {
       e.preventDefault();
       setModal(true, {
         title: "更新日志",
-        body: "UmaFesSimulator 26.5.28 稳定版 更新内容\n——因为作者在考研的原因，所以今年的更新暂且到这里结束了\n——商店功能重构，现在可以自由选择cos服装进行购买。\n——新增主题选择，辅助功能菜单中加入主题切换功能。\n——增加大量的痛车车型\n——全新成就系统，等你来战\n——进度恢复功能，刷新或每次进入网页后，若之前的游戏进度没有在游戏主页，则弹出窗口供确认。\n——新增赛马娘生日Banner功能\n——增加了一些新的彩蛋",
+        body: "UmaFesSimulator 26.6.4 稳定版 更新内容\n——添加了只有低版本浏览器用户能看见的落地页。\n——调整彩蛋事件爆率，使得成就更易获得。",
         confirmLabel: "我知道了",
       });
     },

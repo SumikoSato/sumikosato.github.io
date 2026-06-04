@@ -56,7 +56,7 @@ export const ACHIEVEMENTS = [
     id: "money",
     title: "我钱呢？",
     desc: "坏了，这下兜里一分不剩了。",
-    howToGet: "你在没有足够金钱的情况下尝试购买",
+    howToGet: "在没有足够金钱的情况下尝试购买",
   },
 ];
 

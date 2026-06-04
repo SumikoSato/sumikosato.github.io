@@ -89,12 +89,12 @@ window.__stopSfx = stopSfx;
 window.__playSfx = playSfx;
 
 const AUDIO_MAP = {
-  zoomZoom: "./sound/f7a3e2b1.x7",
+  zoomZoom: "./sound/mazda.x7",
   umaTracks: [
     "./sound/uma/4c8d1e6a.x7",
     "./sound/uma/9b2f5c73.x7",
     "./sound/uma/d1e4a8f6.x7",
-    "./sound/uma/3f7b9c2d.x7",
+    "./sound/uma/umapyoi.x7",
   ],
 };
 
@@ -867,13 +867,13 @@ function enterPhaseSubway(state) {
   // user clarified apply10_then_50: first 10% decide whether any gender event happens;
   // if triggered then 50% pick the corresponding event, otherwise 风平浪静.
   const gender = state.run.gender;
-  const trigger10 = Math.random() < 0.1;
+  const trigger10 = Math.random() < 0.5;
   let nextNode = "wind";
   if (trigger10) {
     if (gender === 0) {
-      nextNode = Math.random() < 0.5 ? "not_man_woman" : "wind";
+      nextNode = Math.random() < 0.8 ? "not_man_woman" : "wind";
     } else {
-      nextNode = Math.random() < 0.5 ? "man_encounter" : "wind";
+      nextNode = Math.random() < 0.8 ? "man_encounter" : "wind";
     }
   }
 
@@ -1650,7 +1650,7 @@ function dispatch(actionId, ctx = {}) {
           return enterPhaseOnlyWelcome(state);
         }
         if (actionId === "not_man_woman_explain") {
-          const hit = Math.random() < 0.5;
+          const hit = Math.random() < 0.7;
           if (hit) {
             unlockAchievement("super_brave");
             return setGameNode(state, {
@@ -1680,7 +1680,7 @@ function dispatch(actionId, ctx = {}) {
           return enterPhaseOnlyWelcome(state);
         }
         if (actionId === "man_flirt_refuse") {
-          const hit = Math.random() < 0.5;
+          const hit = Math.random() < 0.7;
           if (hit) {
             unlockAchievement("heroine");
             return setGameNode(state, {

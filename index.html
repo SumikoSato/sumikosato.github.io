@@ -9,23 +9,60 @@
     <meta http-equiv="Expires" content="0" />
     <title>去马娘Only是什么感觉</title>
     <!-- 版本号查询参数：每次发布新版本时更新 ?v= 后面的值，浏览器将强制拉取新文件 -->
-    <link rel="stylesheet" href="./styles.css?v=26.5.28" />
+    <link rel="stylesheet" href="./styles.css?v=26.6.4" />
   </head>
   <body>
     <div id="app" class="appRoot">正在加载游戏......</div>
 
     <!-- 纯前端：用 ES Modules 加载 -->
     <script>
+      // 浏览器兼容性检测：检查游戏所需的关键特性
+      (function () {
+        var unsupported = [];
+        // 检测 ES6 模块支持
+        if (!("noModule" in document.createElement("script"))) unsupported.push("ES6 模块");
+        // 检测 fetch API
+        if (typeof fetch === "undefined") unsupported.push("Fetch API");
+        // 检测 Promise
+        if (typeof Promise === "undefined") unsupported.push("Promise");
+        // 检测 localStorage
+        try { localStorage.setItem("__test", "1"); localStorage.removeItem("__test"); } catch (e) { unsupported.push("LocalStorage"); }
+        // 检测 CSS 自定义属性
+        if (!window.CSS || !CSS.supports || !CSS.supports("--a", "0")) unsupported.push("CSS 自定义属性");
+
+        if (unsupported.length > 0) {
+          var el = document.getElementById("app");
+          if (el) {
+            el.innerHTML =
+              '<div style="text-align:center;padding:40px 20px;">' +
+              '<h2 style="color:#F08C00;">您正使用不受支持的浏览器</h2>' +
+              '<p style="font-size:16px;line-height:1.8;">' +
+              'Legacy 版本施工中，请等待后续更新。<br>' +
+              '目前还请使用Chrome、Firefox、Edge等现代浏览器游玩。<br>' +
+              'Android用户请尝试更新浏览器或WebView，iOS用户请尝试更新iOS或更换设备。<br>' +
+               '（开发者：应该不会不支持鸿蒙......吧？）<br>' +
+              'Windows XP/Vista用户？<a href="http://www.win32subsystem.live/supermium/" target="_blank" style="color:#5EA820;">点击下载Supermium>></a><br>' +
+              '<img src="http://image.woshipm.com/wp-files/2022/05/ZrwHgIuB0psRcjJusy2q.jpeg" alt="浏览器！速度！现在！"><br>'+
+              '都到这了听首歌吧，<a href="./sound/mazda.x7" target="_blank" style="color:#5EA820;">点击播放>></a><br>' +
+              '或者听听超哥的忠告？<a href="./sound/der.x7" target="_blank" style="color:#5EA820;">点击播放>></a><br>' +
+              '我们还有马儿跳，了解一下？<a href="./sound/uma/umapyoi.x7" target="_blank" style="color:#5EA820;">点击播放>></a><br>' +
+              "</p></div>";
+          }
+          throw new Error("Browser not supported: missing " + unsupported.join(", "));
+        }
+      })();
+    </script>
+    <script>
       // file:// 下 ES Module 可能无法加载；给出明显提示避免"卡死在加载中"。
       setTimeout(() => {
         const el = document.getElementById("app");
         if (el && /正在加载游戏/.test(el.textContent || "")) {
           el.textContent =
-            "正在加载游戏......（如果一直不出现内容，请检查互联网连接。）";
+            "正在加载游戏......（不出现内容？请检查互联网连接。）";
         }
       }, 2000);
     </script>
     <!-- 版本号查询参数同 CSS，发布时同步修改 -->
-    <script type="module" src="./src/game.js?v=26.5.28"></script>
+    <script type="module" src="./src/game.js?v=26.6.4"></script>
   </body>
 </html>
