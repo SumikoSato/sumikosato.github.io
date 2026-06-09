@@ -8,61 +8,103 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>去马娘Only是什么感觉</title>
-    <!-- 版本号查询参数：每次发布新版本时更新 ?v= 后面的值，浏览器将强制拉取新文件 -->
-    <link rel="stylesheet" href="./styles.css?v=26.6.4" />
+    <!--
+      版本路由策略（CSS 媒体查询在 <head> 中完成，JS 路由在 <body> 末尾）：
+        ① 现代浏览器  → styles.css  + ES Module (src/game.js)
+        ② 旧版浏览器  → styles-legacy.css + IIFE (Legacy/dist/legacy.bundle.js)
+        ③ 过旧浏览器  → 不支持提示页
+      检测顺序：CSS Custom Properties + ES Modules → ES5 基础 → 不支持
+    -->
+    <!-- Native CSS：仅现代浏览器生效 -->
+    <link id="css-native" rel="stylesheet" href="./styles.css?v=26.6.9" media="none" />
+    <!-- Legacy CSS：默认加载，现代浏览器会在下方 JS 中禁用 -->
+    <link id="css-legacy" rel="stylesheet" href="./Legacy/styles-legacy.css" />
+    <script>
+      /* ── CSS 路由（head 内立即执行，避免样式闪烁） ────── */
+      (function () {
+        var qs = location.search || "";
+        var forceLegacy = /[?&]legacy(?:[=&#]|$)/i.test(qs);
+        var forceNative = /[?&]native(?:[=&#]|$)/i.test(qs);
+        var isModern = !forceLegacy && (forceNative || (
+          window.CSS && CSS.supports && CSS.supports("--a:0") &&
+          "noModule" in document.createElement("script")
+        ));
+        if (isModern) {
+          document.getElementById("css-native").media = "all";
+          document.getElementById("css-legacy").disabled = true;
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app" class="appRoot">正在加载游戏......</div>
 
-    <!-- 纯前端：用 ES Modules 加载 -->
-    <script>
-      // 浏览器兼容性检测：检查游戏所需的关键特性
-      (function () {
-        var unsupported = [];
-        // 检测 ES6 模块支持
-        if (!("noModule" in document.createElement("script"))) unsupported.push("ES6 模块");
-        // 检测 fetch API
-        if (typeof fetch === "undefined") unsupported.push("Fetch API");
-        // 检测 Promise
-        if (typeof Promise === "undefined") unsupported.push("Promise");
-        // 检测 localStorage
-        try { localStorage.setItem("__test", "1"); localStorage.removeItem("__test"); } catch (e) { unsupported.push("LocalStorage"); }
-        // 检测 CSS 自定义属性
-        if (!window.CSS || !CSS.supports || !CSS.supports("--a", "0")) unsupported.push("CSS 自定义属性");
+    <!-- 不支持提示页（默认隐藏，JS 路由决定是否显示） -->
+    <div id="unsupported" style="display:none;text-align:center;padding:40px 20px;">
+      <h2 style="color:#F08C00;">（手动流汗黄豆）这下是真的不支持了（手动流汗黄豆）</h2>
+      <p style="font-size:16px;line-height:1.8;">
+        虽然我们的确提供了复古版本，但您的浏览器版本真的太低了，以至于无法运行本游戏。<br>
+        不过好消息是你的设备现在可以上网了，不是吗？<br>
+        如需游玩复古版本，PC用户请使用 Chrome 49 、Firefox 52 或更高版本的浏览器。<br>
+        移动设备用户，系统版本理论最低为Symbian Belle/Windows Phone 8/Android 4.0/iOS 6。<br>
+        经测试，Windows Phone 7.5和Android2.3仍然可以在CSS无法正确加载的情况下运行。<br>
+        我们推荐Windows XP/Vista用户下载Supermium游玩原生版本。<a href="http://www.win32subsystem.live/supermium/" target="_blank" style="color:#5EA820;">点击下载Supermium>></a><br>
+        <img src="http://image.woshipm.com/wp-files/2022/05/ZrwHgIuB0psRcjJusy2q.jpeg" alt="浏览器！速度！现在！"><br>
+        都到这了听首歌吧，<a href="./sound/mazda.mp3" target="_blank" style="color:#5EA820;">点击播放>></a><br>
+        或者听听超哥的忠告？<a href="./sound/der.mp3" target="_blank" style="color:#5EA820;">点击播放>></a><br>
+        我们还有马儿跳，了解一下？<a href="./sound/uma/umapyoi.mp3" target="_blank" style="color:#5EA820;">点击播放>></a><br>
+      </p>
+    </div>
 
-        if (unsupported.length > 0) {
-          var el = document.getElementById("app");
-          if (el) {
-            el.innerHTML =
-              '<div style="text-align:center;padding:40px 20px;">' +
-              '<h2 style="color:#F08C00;">您正使用不受支持的浏览器</h2>' +
-              '<p style="font-size:16px;line-height:1.8;">' +
-              'Legacy 版本施工中，请等待后续更新。<br>' +
-              '目前还请使用Chrome、Firefox、Edge等现代浏览器游玩。<br>' +
-              'Android用户请尝试更新浏览器或WebView，iOS用户请尝试更新iOS或更换设备。<br>' +
-               '（开发者：应该不会不支持鸿蒙......吧？）<br>' +
-              'Windows XP/Vista用户？<a href="http://www.win32subsystem.live/supermium/" target="_blank" style="color:#5EA820;">点击下载Supermium>></a><br>' +
-              '<img src="http://image.woshipm.com/wp-files/2022/05/ZrwHgIuB0psRcjJusy2q.jpeg" alt="浏览器！速度！现在！"><br>'+
-              '都到这了听首歌吧，<a href="./sound/mazda.mp3" target="_blank" style="color:#5EA820;">点击播放>></a><br>' +
-              '或者听听超哥的忠告？<a href="./sound/der.mp3" target="_blank" style="color:#5EA820;">点击播放>></a><br>' +
-              '我们还有马儿跳，了解一下？<a href="./sound/uma/umapyoi.mp3" target="_blank" style="color:#5EA820;">点击播放>></a><br>' +
-              "</p></div>";
-          }
-          throw new Error("Browser not supported: missing " + unsupported.join(", "));
+    <!--
+      ── JS 路由（body 末尾，DOM 已就绪） ──────────────────
+      检测顺序：
+        ① CSS.supports + noModule → 加载原生 ES Module
+        ② Array.prototype.map + JSON → 加载 Legacy IIFE
+        ③ 其余 → 显示 unsupported 提示
+    -->
+    <script>
+      (function () {
+        var qs = location.search || "";
+        var forceLegacy = /[?&]legacy(?:[=&#]|$)/i.test(qs);
+        var forceNative = /[?&]native(?:[=&#]|$)/i.test(qs);
+        var isModern = !forceLegacy && (forceNative || (
+          window.CSS && CSS.supports && CSS.supports("--a:0") &&
+          "noModule" in document.createElement("script")
+        ));
+
+        if (isModern) {
+          /* ── 原生版本：ES Modules ─────────────────────── */
+          var s = document.createElement("script");
+          s.type = "module";
+          s.src = "./src/game.js?v=26.6.9";
+          document.body.appendChild(s);
+
+          /* 加载超时提示 */
+          setTimeout(function () {
+            var el = document.getElementById("app");
+            if (el && /正在加载游戏/.test(el.textContent || "")) {
+              el.textContent = "正在加载游戏......（不出现内容？请检查互联网连接。）";
+            }
+          }, 2000);
+
+        } else if (Array.prototype.map && JSON.parse && document.querySelector) {
+          /* ── Legacy 版本：ES5 IIFE ────────────────────── */
+          var ps = document.createElement("script");
+          ps.src = "./Legacy/polyfills.js";
+          ps.onload = function () {
+            var bs = document.createElement("script");
+            bs.src = "./Legacy/dist/legacy.bundle.js";
+            document.body.appendChild(bs);
+          };
+          document.body.appendChild(ps);
+
+        } else {
+          /* ── 不支持 ──────────────────────────────────── */
+          document.getElementById("app").style.display = "none";
+          document.getElementById("unsupported").style.display = "block";
         }
       })();
     </script>
-    <script>
-      // file:// 下 ES Module 可能无法加载；给出明显提示避免"卡死在加载中"。
-      setTimeout(() => {
-        const el = document.getElementById("app");
-        if (el && /正在加载游戏/.test(el.textContent || "")) {
-          el.textContent =
-            "正在加载游戏......（不出现内容？请检查互联网连接。）";
-        }
-      }, 2000);
-    </script>
-    <!-- 版本号查询参数同 CSS，发布时同步修改 -->
-    <script type="module" src="./src/game.js?v=26.6.4"></script>
   </body>
 </html>

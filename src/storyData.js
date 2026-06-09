@@ -8,7 +8,7 @@ export {
   PAIN_CAR_MODELS_OFFICE,
 } from "./car.js";
 
-export const GAME_VERSION = "26.6.4";
+export const GAME_VERSION = "26.6.9";
 
 export const PHONE_MODELS = [
   { id: "GooglePixel6Pro", label: "Google Pixel 6 Pro", weight: 5, template: "高中生" },

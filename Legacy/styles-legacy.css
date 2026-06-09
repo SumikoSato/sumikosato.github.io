@@ -1,0 +1,407 @@
+/*
+ * Legacy-compatible CSS for SimUmaFes
+ * - All CSS custom properties inlined
+ * - Vendor prefixes added (webkit, ms)
+ * - Grid replaced with Flexbox where needed
+ * - :has(), min(), inset replaced with fallbacks
+ */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: #EEEDF4;
+  color: #2C2C2C;
+  position: relative;
+}
+
+/* When an eventBanner is present, body gets extra top padding via JS */
+body.has-banner {
+  padding-top: 42px;
+}
+
+/* ── Layout ───────────────────────────────────────────── */
+.appRoot {
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  padding: 24px 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Card ─────────────────────────────────────────────── */
+.card {
+  width: 100%;
+  max-width: 900px;
+  background: #FFFFFF;
+  border: 1px solid #D2D0DC;
+  -webkit-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.cardHeader {
+  background: #98D94A;
+  background: -webkit-linear-gradient(top, #98D94A 0%, #5EA820 100%);
+  background: -ms-linear-gradient(top, #98D94A 0%, #5EA820 100%);
+  background: linear-gradient(180deg, #98D94A 0%, #5EA820 100%);
+  padding: 14px 20px;
+  text-align: center;
+}
+
+.cardBody {
+  padding: 22px 20px 20px;
+}
+
+/* ── Typography ───────────────────────────────────────── */
+.title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+  color: #FFFFFF;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+  letter-spacing: 0.02em;
+}
+
+.lead {
+  line-height: 1.75;
+  white-space: pre-wrap;
+  margin: 0 0 16px;
+  text-align: center;
+  color: #6A6A7A;
+}
+
+.textBlock {
+  line-height: 1.8;
+  white-space: pre-wrap;
+  color: #2C2C2C;
+}
+
+/* ── Controls / Buttons ───────────────────────────────── */
+.controls {
+  margin-top: 18px;
+  text-align: center;
+  line-height: 0;
+}
+
+.controls > * {
+  line-height: 22px;
+  margin: 0 6px 12px;
+}
+
+button {
+  cursor: pointer;
+  border: 2px solid #D2D0DC;
+  background: #FFFFFF;
+  color: #2C2C2C;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  padding: 11px 24px;
+  font-weight: 700;
+  font-size: 15px;
+  -webkit-transition: -webkit-transform 0.05s ease, opacity 0.15s ease;
+  transition: transform 0.05s ease, opacity 0.15s ease;
+  min-width: 88px;
+  line-height: 22px;
+  text-align: center;
+  display: inline-block;
+  vertical-align: top;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+button:hover  { opacity: 0.82; }
+button:active { -webkit-transform: translateY(1px); transform: translateY(1px); }
+
+button.primary {
+  background: #98D94A;
+  background: -webkit-linear-gradient(top, #98D94A 0%, #5EA820 100%);
+  background: -ms-linear-gradient(top, #98D94A 0%, #5EA820 100%);
+  background: linear-gradient(180deg, #98D94A 0%, #5EA820 100%);
+  border-color: #4E9414;
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+  -webkit-box-shadow: 0 3px 10px rgba(80, 160, 24, 0.35);
+  box-shadow: 0 3px 10px rgba(80, 160, 24, 0.35);
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  -webkit-transform: none;
+  transform: none;
+}
+
+/* ── Resource pills ───────────────────────────────────── */
+.resourceLine {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  gap: 10px;
+  -ms-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.resourcePill {
+  padding: 6px 16px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #F08C00;
+  font-weight: 800;
+  color: #FFFFFF;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+
+.resourcePill--status {
+  background: #5FA820;
+}
+
+/* ── Select ───────────────────────────────────────────── */
+select {
+  width: 100%;
+  max-width: 520px;
+  padding: 10px 12px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  border: 1.5px solid #D2D0DC;
+  background: #FFFFFF;
+  color: #000000;
+  font-weight: 700;
+}
+
+.row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  gap: 12px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -ms-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+/* ── HUD bars ─────────────────────────────────────────── */
+.barWrap {
+  width: 100%;
+}
+
+.barLabel {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: #2C2C2C;
+  font-size: 14px;
+}
+
+.barOuter {
+  height: 14px;
+  background: rgba(0, 0, 0, 0.08);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+/* 精力条 */
+.barInner {
+  height: 100%;
+  background: #FFB07A;
+  background: -webkit-linear-gradient(left, #FFB07A 0%, #FF7040 100%);
+  background: -ms-linear-gradient(left, #FFB07A 0%, #FF7040 100%);
+  background: linear-gradient(90deg, #FFB07A 0%, #FF7040 100%);
+  width: 0%;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* 认可度条 */
+.barInner--recognition {
+  height: 100%;
+  background: #55CAFF;
+  background: -webkit-linear-gradient(left, #55CAFF 0%, #1A90D0 100%);
+  background: -ms-linear-gradient(left, #55CAFF 0%, #1A90D0 100%);
+  background: linear-gradient(90deg, #55CAFF 0%, #1A90D0 100%);
+  width: 0%;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* HUD grid: use flex instead of CSS Grid */
+.hudGrid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  gap: 12px;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+}
+
+.hudGrid > * {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 45%;
+  -webkit-flex: 1 1 45%;
+  flex: 1 1 45%;
+}
+
+@media (max-width: 720px) {
+  .hudGrid > * {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 100%;
+    -webkit-flex: 1 1 100%;
+    flex: 1 1 100%;
+  }
+}
+
+/* ── Footer ───────────────────────────────────────────── */
+.pageFooter {
+  margin-top: 24px;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #555555;
+}
+
+.pageFooter a {
+  color: #555555;
+  text-decoration: none;
+}
+
+.pageFooter a:hover {
+  text-decoration: underline;
+  color: #5FA820;
+}
+
+/* ── Floating assistant menu ──────────────────────────── */
+.fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  -webkit-align-items: flex-end;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.fab__sound {
+  padding: 8px 10px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  border: 1.5px solid #D2D0DC;
+  background: #FFFFFF;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.55;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+  line-height: 1;
+}
+
+.fab__sound:hover {
+  opacity: 1;
+}
+
+/* ── Event Banner ─────────────────────────────────────── */
+.eventBanner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: #98D94A;
+  background: -webkit-linear-gradient(top, #98D94A 0%, #5EA820 100%);
+  background: -ms-linear-gradient(top, #98D94A 0%, #5EA820 100%);
+  background: linear-gradient(180deg, #98D94A 0%, #5EA820 100%);
+  -webkit-box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4);
+  box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4);
+  -webkit-animation: eventGlow 2s ease-in-out infinite alternate;
+  animation: eventGlow 2s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes eventGlow {
+  from { -webkit-box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4); box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4); }
+  to   { -webkit-box-shadow: 0 2px 20px rgba(152, 217, 74, 0.6); box-shadow: 0 2px 20px rgba(152, 217, 74, 0.6); }
+}
+
+@keyframes eventGlow {
+  from { -webkit-box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4); box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4); }
+  to   { -webkit-box-shadow: 0 2px 20px rgba(152, 217, 74, 0.6); box-shadow: 0 2px 20px rgba(152, 217, 74, 0.6); }
+}

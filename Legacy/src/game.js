@@ -1,6 +1,11 @@
-import { bindUI, render, setModal } from "./ui.js";
-import { clearGame, loadGame, saveGame, getSoundEnabled } from "./storage.js";
-import { unlockAchievement } from "./achievements.js";
+/**
+ * @file Legacy game logic — ES5 port of src/game.js
+ * All game logic, text, node IDs, and action IDs are identical to the native version.
+ * Only syntax is down-leveled (const/let→var, no optional chaining, no template literals, etc.)
+ * Removed: save/load, achievements, theme, async audio (fetch/Blob).
+ */
+
+import { render, bindUI, setModal } from "./ui.js";
 import {
   COSPLAY_POOL,
   COLLEGE_TEMPLATE,
@@ -17,91 +22,81 @@ import {
 import { CAR_MODELS, getCarLabel } from "./car.js";
 import { UMA_NAMES } from "./umaNames.js";
 import { clamp, formatTimeHHMM, randInt, weightedPick } from "./utils.js";
-import { applyTheme, getThemeId } from "./theme.js";
 
 function clamp01to100(n) {
   return clamp(n, 0, 100);
 }
 
-// ── Audio management ─────────────────────────────────
-let currentBgm = null;
-let currentBgmBlobUrl = null;
-let currentSfx = null;
-let currentSfxBlobUrl = null;
+// ── Audio management (Legacy: direct src, no fetch/Blob) ──────────
+var currentBgm = null;
+var currentSfx = null;
 
-export async function playBgm(src) {
+export function playBgm(src) {
   stopBgm();
   if (!getSoundEnabled()) return;
   try {
-    const resp = await fetch(src);
-    if (!resp.ok) { console.warn("playBgm fetch failed:", resp.status, src); return; }
-    const buf = await resp.arrayBuffer();
-    const blob = new Blob([buf], { type: "audio/mpeg" });
-    currentBgmBlobUrl = URL.createObjectURL(blob);
-    currentBgm = new Audio(currentBgmBlobUrl);
+    currentBgm = new Audio();
+    currentBgm.src = src;
     currentBgm.loop = true;
-    await currentBgm.play();
-  } catch (e) { console.warn("playBgm error:", e); }
+    currentBgm.load();
+    currentBgm.play();
+  } catch (e) { /* ignore */ }
 }
 
-export async function playSfx(src) {
+export function playSfx(src) {
   stopSfx();
   if (!getSoundEnabled()) return;
   try {
-    const resp = await fetch(src);
-    if (!resp.ok) { console.warn("playSfx fetch failed:", resp.status, src); return; }
-    const buf = await resp.arrayBuffer();
-    const blob = new Blob([buf], { type: "audio/mpeg" });
-    currentSfxBlobUrl = URL.createObjectURL(blob);
-    currentSfx = new Audio(currentSfxBlobUrl);
-    currentSfx.addEventListener("ended", () => { stopSfx(); });
-    await currentSfx.play();
-  } catch (e) { console.warn("playSfx error:", e); }
+    currentSfx = new Audio();
+    currentSfx.src = src;
+    currentSfx.addEventListener("ended", function () { stopSfx(); });
+    currentSfx.load();
+    currentSfx.play();
+  } catch (e) { /* ignore */ }
 }
 
 function stopSfx() {
   if (currentSfx) {
-    try { currentSfx.pause(); } catch { /* ignore */ }
+    try { currentSfx.pause(); } catch (e) { /* ignore */ }
     currentSfx.currentTime = 0;
     currentSfx = null;
-  }
-  if (currentSfxBlobUrl) {
-    URL.revokeObjectURL(currentSfxBlobUrl);
-    currentSfxBlobUrl = null;
   }
 }
 
 export function stopBgm() {
   if (currentBgm) {
-    try { currentBgm.pause(); } catch { /* ignore */ }
+    try { currentBgm.pause(); } catch (e) { /* ignore */ }
     currentBgm.currentTime = 0;
     currentBgm = null;
   }
-  if (currentBgmBlobUrl) {
-    URL.revokeObjectURL(currentBgmBlobUrl);
-    currentBgmBlobUrl = null;
-  }
   stopSfx();
 }
+
+// Sound enabled check (simple flag, no localStorage)
+var _soundEnabled = true;
+function getSoundEnabled() { return _soundEnabled; }
+function setSoundEnabled(v) { _soundEnabled = !!v; }
+
 // Expose for ui.js (avoid circular import)
 window.__stopBgm = stopBgm;
 window.__stopSfx = stopSfx;
 window.__playSfx = playSfx;
+window.__getSoundEnabled = getSoundEnabled;
+window.__setSoundEnabled = setSoundEnabled;
 
-const AUDIO_MAP = {
-  zoomZoom: "./sound/mazda.mp3",
+var AUDIO_MAP = {
+  zoomZoom: "../../sound/mazda.mp3",
   umaTracks: [
-    "./sound/uma/4c8d1e6a.mp3",
-    "./sound/uma/9b2f5c73.mp3",
-    "./sound/uma/d1e4a8f6.mp3",
-    "./sound/uma/umapyoi.mp3",
+    "../../sound/uma/4c8d1e6a.mp3",
+    "../../sound/uma/9b2f5c73.mp3",
+    "../../sound/uma/d1e4a8f6.mp3",
+    "../../sound/uma/umapyoi.mp3",
   ],
 };
 
 function requireMoneyOrModal(state, cost) {
-  const money = state?.run?.money ?? 0;
+  var money = (state.run && state.run.money != null) ? state.run.money : 0;
   if (money >= cost) return true;
-  unlockAchievement("money");
   setModal(true, { title: "提示", body: "金钱不足", confirmLabel: "确认" });
   return false;
 }
@@ -116,27 +111,27 @@ function createDefaultState() {
     nodeText: "",
     choices: [],
     select: null,
-    energy: null, // not active until D-1
-    recognition: null, // set at OnlyWelcome
-    timeMinutes: null, // exhibition time (10:00-18:00), minutes from 00:00
-    rngSeed: null, // optional (not persisted now)
+    energy: null,
+    recognition: null,
+    timeMinutes: null,
+    rngSeed: null,
 
-    role: null, // frozen role selection result
-    run: null, // mutable run state (persisted)
-    actionsLog: [], // player action log for debugging
-    pixelMissCount: 0, // consecutive games without pixel easter egg
-    zoomMissCount: 0,  // consecutive games without zoom easter egg
+    role: null,
+    run: null,
+    actionsLog: [],
+    pixelMissCount: 0,
+    zoomMissCount: 0,
   };
 }
 
 function isHighSchool(role) {
-  return role?.templateId === HIGH_SCHOOL_TEMPLATE;
+  return role && role.templateId === HIGH_SCHOOL_TEMPLATE;
 }
 function isCollege(role) {
-  return role?.templateId === COLLEGE_TEMPLATE;
+  return role && role.templateId === COLLEGE_TEMPLATE;
 }
 function isOffice(role) {
-  return role?.templateId === OFFICE_TEMPLATE;
+  return role && role.templateId === OFFICE_TEMPLATE;
 }
 
 function specialProbForParent(specialId) {
@@ -158,26 +153,33 @@ function hungerClamp(n) {
 }
 
 function pickPhoneForTemplate(templateId, rng) {
-  const tempLabel = templateId === HIGH_SCHOOL_TEMPLATE ? "高中生" : templateId === COLLEGE_TEMPLATE ? "大学生" : "社畜";
-  const items = PHONE_MODELS.filter((p) => p.template === tempLabel).map((p) => ({ id: p.id, weight: p.weight, label: p.label }));
-  const pickId = weightedPick(items, rng);
-  const picked = items.find((x) => x.id === pickId);
+  var tempLabel = templateId === HIGH_SCHOOL_TEMPLATE ? "高中生" : templateId === COLLEGE_TEMPLATE ? "大学生" : "社畜";
+  var items = [];
+  for (var i = 0; i < PHONE_MODELS.length; i++) {
+    if (PHONE_MODELS[i].template === tempLabel) {
+      items.push({ id: PHONE_MODELS[i].id, weight: PHONE_MODELS[i].weight, label: PHONE_MODELS[i].label });
+    }
+  }
+  var pickId = weightedPick(items, rng);
+  var picked = null;
+  for (var j = 0; j < items.length; j++) {
+    if (items[j].id === pickId) { picked = items[j]; break; }
+  }
   return { id: picked.id, label: picked.label };
 }
 
 function sampleWithoutReplacement(pool, count, rng) {
-  const arr = [...pool];
-  // Fisher-Yates shuffle partial
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  var arr = pool.slice();
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(rng() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
   }
   return arr.slice(0, count);
 }
 
-function createRoleSelection(genderOverride, rng = Math.random) {
-  // Template等概率（用户未给出权重）
-  const templateId = weightedPick(
+function createRoleSelection(genderOverride, rng) {
+  if (!rng) rng = Math.random;
+  var templateId = weightedPick(
     [
       { id: HIGH_SCHOOL_TEMPLATE, weight: 1 },
       { id: COLLEGE_TEMPLATE, weight: 1 },
@@ -185,16 +187,16 @@ function createRoleSelection(genderOverride, rng = Math.random) {
     ],
     rng,
   );
-  let money;
-  let wardrobeCosCount;
-  let hasPainCar = false;
-  let painCarOptions = null;
+  var money;
+  var wardrobeCosCount;
+  var hasPainCar = false;
+  var painCarOptions = null;
 
-  if (isHighSchool({ templateId })) {
+  if (isHighSchool({ templateId: templateId })) {
     money = 300;
     wardrobeCosCount = 1;
     hasPainCar = false;
-  } else if (isCollege({ templateId })) {
+  } else if (isCollege({ templateId: templateId })) {
     money = 1000;
     wardrobeCosCount = 2;
     hasPainCar = true;
@@ -206,7 +208,7 @@ function createRoleSelection(genderOverride, rng = Math.random) {
     painCarOptions = PAIN_CAR_MODELS_OFFICE;
   }
 
-  const gender = (genderOverride === 0 || genderOverride === 1)
+  var gender = (genderOverride === 0 || genderOverride === 1)
     ? genderOverride
     : weightedPick(
         [
@@ -216,58 +218,63 @@ function createRoleSelection(genderOverride, rng = Math.random) {
         rng,
       );
 
-  // Special numeric only exists for 高中生（家长严格度）与社畜（公司内卷度）
-  let specialId = "none";
-  let specialLabel = "-";
+  var specialId = "none";
+  var specialLabel = "-";
   if (templateId === HIGH_SCHOOL_TEMPLATE || templateId === OFFICE_TEMPLATE) {
-    const specialLevels = ["none", "mid", "strong"];
+    var specialLevels = ["none", "mid", "strong"];
     specialId = specialLevels[randInt(rng, 0, 2)];
     specialLabel = specialId === "none" ? "无" : specialId === "mid" ? "中" : "强";
   }
 
-  // Draw order: 手机 -> 痛车+样式 -> 衣柜（若有痛车，样式固定为衣柜第一套）
-  const phone = pickPhoneForTemplate(templateId, rng);
+  var phone = pickPhoneForTemplate(templateId, rng);
 
-  let painCar = { id: "none", label: "无" };
-  let painCarStyle = null;
+  var painCar = { id: "none", label: "无" };
+  var painCarStyle = null;
   if (hasPainCar) {
-    const painItems = painCarOptions.map((x) => ({ id: x.id, weight: x.weight, label: x.label }));
-    const painPickId = weightedPick(painItems, rng);
-    const painPicked = painItems.find((x) => x.id === painPickId);
+    var painItems = [];
+    for (var pi = 0; pi < painCarOptions.length; pi++) {
+      painItems.push({ id: painCarOptions[pi].id, weight: painCarOptions[pi].weight, label: painCarOptions[pi].label });
+    }
+    var painPickId = weightedPick(painItems, rng);
+    var painPicked = null;
+    for (var pp = 0; pp < painItems.length; pp++) {
+      if (painItems[pp].id === painPickId) { painPicked = painItems[pp]; break; }
+    }
     painCar = { id: painPicked.id, label: painPicked.label };
     if (painCar.id !== "none") {
       painCarStyle = sampleWithoutReplacement(COSPLAY_POOL, 1, rng)[0];
     }
   }
 
-  // 有痛车样式时：衣柜第一套固定与痛车样式相同，其余从剩余池抽取
-  let wardrobeCosplays;
+  var wardrobeCosplays;
   if (painCarStyle) {
-    const remaining = COSPLAY_POOL.filter((c) => c !== painCarStyle);
-    wardrobeCosplays = [painCarStyle, ...sampleWithoutReplacement(remaining, wardrobeCosCount - 1, rng)];
+    var remaining = [];
+    for (var rc = 0; rc < COSPLAY_POOL.length; rc++) {
+      if (COSPLAY_POOL[rc] !== painCarStyle) remaining.push(COSPLAY_POOL[rc]);
+    }
+    wardrobeCosplays = [painCarStyle].concat(sampleWithoutReplacement(remaining, wardrobeCosCount - 1, rng));
   } else {
     wardrobeCosplays = sampleWithoutReplacement(COSPLAY_POOL, wardrobeCosCount, rng);
   }
 
   return {
     frozen: true,
-    templateId,
-    money,
-    specialId,
-    specialLabel,
-    gender,
+    templateId: templateId,
+    money: money,
+    specialId: specialId,
+    specialLabel: specialLabel,
+    gender: gender,
     phone: phone.id,
     phoneLabel: phone.label,
-    wardrobeCosplays,
+    wardrobeCosplays: wardrobeCosplays,
     painCarId: painCar.id,
     painCarLabel: painCar.label,
-    painCarStyle,
+    painCarStyle: painCarStyle,
   };
 }
 
 function createRunStateFromRole(role) {
   return {
-    // persistable
     roleTemplateId: role.templateId,
     money: role.money,
     gender: role.gender,
@@ -276,7 +283,7 @@ function createRunStateFromRole(role) {
     phone: role.phone,
     phoneLabel: role.phoneLabel,
 
-    wardrobeCosplays: [...role.wardrobeCosplays], // array of cosplay ids
+    wardrobeCosplays: role.wardrobeCosplays.slice(),
     backpackCosplays: [],
     backpackBadges: 0,
 
@@ -284,75 +291,75 @@ function createRunStateFromRole(role) {
     painCarLabel: role.painCarLabel,
     painCarStyle: role.painCarStyle,
 
-    travelMode: null, // "selfDrive" | "hardSeat" | "highSpeedRail" | "flight"
-    hotelId: null, // "RuSiHaoWeiDeng" | ...
+    travelMode: null,
+    hotelId: null,
 
-    makeupBookedTime: null, // 7/8/9/10
+    makeupBookedTime: null,
     makeupDone: false,
 
-    // exhibition time + event flags
     timeMinutes: null,
     recognition: null,
 
     energy: null,
 
-    isTourist: false, // true if player chose tourist path at D-10
+    isTourist: false,
 
-    // first-trigger flags
     flags: {
-      easterHasPinUsed: false, // 有品！
-      easterZoomZoomUsed: false, // Zoom-Zoom
-      noMakeupFirstUsed: false, // 没化妆......第一次
+      easterHasPinUsed: false,
+      easterZoomZoomUsed: false,
+      noMakeupFirstUsed: false,
     },
   };
 }
 
 function formatRoleText(state) {
-  const role = state.role;
+  var role = state.role;
   if (!role) return "";
   if (state.genderSelect == null) {
     return ["性别：-", "金钱：-", "智能手机：-", "cosplay服装（衣柜）：-", "痛车：-", "痛车样式：-", "家长/公司强度：-"].join("\n");
   }
-  const lines = [
-    `性别：${role.gender === 0 ? "男性" : role.gender === 1 ? "女性" : "-"}`,
-    `金钱：${role.money}`,
-    `智能手机：${role.phoneLabel || "-"}`,
-    `cosplay服装（衣柜）：${role.wardrobeCosplays.join("，") || "-"}`,
-    `痛车：${role.painCarLabel || "-"}`,
-    `痛车样式：${role.painCarStyle || "-"}`,
-    `家长/公司强度：${role.specialLabel || "-"}`,
+  var lines = [
+    "性别：" + (role.gender === 0 ? "男性" : role.gender === 1 ? "女性" : "-"),
+    "金钱：" + role.money,
+    "智能手机：" + (role.phoneLabel || "-"),
+    "cosplay服装（衣柜）：" + (role.wardrobeCosplays.join("，") || "-"),
+    "痛车：" + (role.painCarLabel || "-"),
+    "痛车样式：" + (role.painCarStyle || "-"),
+    "家长/公司强度：" + (role.specialLabel || "-"),
   ];
   return lines.join("\n");
 }
 
 function formatText(template, vars) {
-  return template.replace(/\{\{(\w+)\}\}/g, (_, k) => (vars?.[k] ?? ""));
+  return template.replace(/\{\{(\w+)\}\}/g, function (_, k) {
+    return (vars && vars[k] != null) ? vars[k] : "";
+  });
 }
 
 function isPhonePixel(state) {
-  return String(state.run?.phoneLabel || "").includes("Pixel");
+  return String((state.run && state.run.phoneLabel) || "").indexOf("Pixel") >= 0;
 }
 
 function isPainCarMazda(state) {
-  // Based on spec: Zoom-Zoom only if car model is Mazda (any Mazda in provided lists)
-  return String(state.run?.painCarLabel || "").includes("马自达");
+  return String((state.run && state.run.painCarLabel) || "").indexOf("马自达") >= 0;
 }
 
 function hasBackpackCosplay(state) {
-  return (state.run?.backpackCosplays || []).length >= 1;
+  return ((state.run && state.run.backpackCosplays) || []).length >= 1;
 }
 
 function getAnyBackpackCosplay(state) {
-  const list = state.run?.backpackCosplays || [];
+  var list = (state.run && state.run.backpackCosplays) || [];
   return list[0] || null;
 }
 
-function getCosplayFromBackpackOrPlaceholder(state, placeholder = "-") {
+function getCosplayFromBackpackOrPlaceholder(state, placeholder) {
+  if (!placeholder) placeholder = "-";
   return getAnyBackpackCosplay(state) || placeholder;
 }
 
 function checkAndEndNoOneLikesMeIfNeeded(state) {
-  if (state.run?.recognition != null && state.run.recognition <= 0) {
+  if (state.run && state.run.recognition != null && state.run.recognition <= 0) {
     setEnding(state, "noOneLikesMe");
     return true;
   }
@@ -360,7 +367,7 @@ function checkAndEndNoOneLikesMeIfNeeded(state) {
 }
 
 function checkAndEndLoveYourselfIfNeeded(state) {
-  if (state.run?.energy != null && state.run.energy <= 0) {
+  if (state.run && state.run.energy != null && state.run.energy <= 0) {
     setEnding(state, "loveYourself");
     return true;
   }
@@ -369,20 +376,18 @@ function checkAndEndLoveYourselfIfNeeded(state) {
 
 function setEnding(state, endingKey) {
   stopBgm();
-  const ending = ENDINGS[endingKey];
+  var ending = ENDINGS[endingKey];
   state.screen = "ending";
   state.nodeId = null;
   state.phaseId = null;
-  state.nodeTitle = ending?.name || "结局";
-  state.nodeText = ending?.text || "";
+  state.nodeTitle = (ending && ending.name) || "结局";
+  state.nodeText = (ending && ending.text) || "";
   state.choices = [];
   state.select = null;
-  state.endingName = ending?.name;
-  state.endingText = ending?.text;
-  // Increment easter egg miss counts for next game
-  if (state.run && !state.run.flags?.easterHasPinUsed) state.pixelMissCount = (state.pixelMissCount ?? 0) + 1;
-  if (state.run && !state.run.flags?.easterZoomZoomUsed) state.zoomMissCount = (state.zoomMissCount ?? 0) + 1;
-  saveGame(state);
+  state.endingName = ending && ending.name;
+  state.endingText = ending && ending.text;
+  if (state.run && !(state.run.flags && state.run.flags.easterHasPinUsed)) state.pixelMissCount = (state.pixelMissCount != null ? state.pixelMissCount : 0) + 1;
+  if (state.run && !(state.run.flags && state.run.flags.easterZoomZoomUsed)) state.zoomMissCount = (state.zoomMissCount != null ? state.zoomMissCount : 0) + 1;
   render(state);
 }
 
@@ -393,29 +398,26 @@ function updateHudText(state) {
   }
 }
 
-function setGameNode(state, { nodeId, title, text, choices, select, autoDisableMs } = {}) {
+function setGameNode(state, opts) {
+  if (!opts) opts = {};
   stopBgm();
   state.screen = "game";
-  state.nodeId = nodeId;
-  state.nodeTitle = title || "";
-  state.nodeText = text || "";
-  state.choices = choices || [];
-  state.select = select || null;
-  state.autoDisableMs = autoDisableMs || 0;
+  state.nodeId = opts.nodeId;
+  state.nodeTitle = opts.title || "";
+  state.nodeText = opts.text || "";
+  state.choices = opts.choices || [];
+  state.select = opts.select || null;
+  state.autoDisableMs = opts.autoDisableMs || 0;
   updateHudText(state);
-  saveGame(state);
   render(state);
 }
 
 function enterPhaseD30(state) {
   state.phaseId = "D-30";
-  // Parent gate only for high school template
-  if (isHighSchool(state.role) && state.run?.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setGameNodeParentCaughtEnding(state);
+  if (isHighSchool(state.role) && state.run && state.run.specialId !== "none") {
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setGameNodeParentCaughtEnding(state);
   }
-  // else go to "好想去马娘Only"
   return enterNodeGoodWant(state);
 }
 
@@ -453,9 +455,8 @@ function enterShopEnzao(state) {
 function enterPhaseD14(state) {
   state.phaseId = "D-14";
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setGameNodeParentCaughtEnding(state);
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setGameNodeParentCaughtEnding(state);
   }
 
   return setGameNode(state, {
@@ -471,35 +472,41 @@ function enterPhaseD14(state) {
 }
 
 function enterShopTaobao(state) {
-  // 随机抽取4个cos服（排除已拥有的）
-  const owned = new Set(state.run?.wardrobeCosplays || []);
-  const pool = COSPLAY_POOL.filter((n) => !owned.has(n));
-  const picks = sampleWithoutReplacement(pool, 4, Math.random);
+  var owned = {};
+  var wc = (state.run && state.run.wardrobeCosplays) || [];
+  for (var oi = 0; oi < wc.length; oi++) owned[wc[oi]] = true;
+  var pool = [];
+  for (var ci = 0; ci < COSPLAY_POOL.length; ci++) {
+    if (!owned[COSPLAY_POOL[ci]]) pool.push(COSPLAY_POOL[ci]);
+  }
+  var picks = sampleWithoutReplacement(pool, 4, Math.random);
   state.run.shopCosOptions = picks;
+
+  var choices = [];
+  for (var i = 0; i < picks.length; i++) {
+    choices.push({
+      choiceId: "buy_cos_" + i,
+      label: "购买 " + picks[i] + " cos服*1（金钱-500）",
+      primary: i === 0,
+    });
+  }
+  choices.push({ choiceId: "shop_taobao_reroll", label: "刷新商店" });
+  choices.push({ choiceId: "shop_taobao_skip", label: "还是算了" });
 
   return setGameNode(state, {
     nodeId: "shop_taobao",
     title: "掏宝商城",
     text:
       "欢迎来到掏宝商城，这里你能买到各种各样的cos服，种类齐全，价格实惠。",
-    choices: [
-      ...picks.map((name, i) => ({
-        choiceId: `buy_cos_${i}`,
-        label: `购买 ${name} cos服*1（金钱-500）`,
-        primary: i === 0,
-      })),
-      { choiceId: "shop_taobao_reroll", label: "刷新商店" },
-      { choiceId: "shop_taobao_skip", label: "还是算了" },
-    ],
+    choices: choices,
   });
 }
 
 function enterPhaseD10(state) {
   state.phaseId = "D-10";
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setGameNodeParentCaughtEnding(state);
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setGameNodeParentCaughtEnding(state);
   }
 
   return setGameNode(state, {
@@ -532,18 +539,17 @@ function enterShopMakeup(state) {
 function enterPhaseD7(state) {
   state.phaseId = "D-7";
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setGameNodeParentCaughtEnding(state);
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setGameNodeParentCaughtEnding(state);
   }
 
-  const hasPainCar = state.run.painCarId && state.run.painCarId !== "none";
+  var hasPainCar = state.run.painCarId && state.run.painCarId !== "none";
 
   if (hasPainCar) {
     return setGameNode(state, {
       nodeId: "event_paincar_open",
       title: "开痛车去吗",
-      text: `距离马O还剩下7天，你需要考虑一下你的出行方式。相比其他爱好者来讲，你很幸运有一辆（${state.run.painCarLabel}）的（${state.run.painCarStyle}）痛车，你在思考要不要把车开过去。`,
+      text: "距离马O还剩下7天，你需要考虑一下你的出行方式。相比其他爱好者来讲，你很幸运有一辆（" + state.run.painCarLabel + "）的（" + state.run.painCarStyle + "）痛车，你在思考要不要把车开过去。",
       choices: [
         { choiceId: "paincar_open", label: "开！（需要燃油费-200）", primary: true },
         { choiceId: "paincar_close", label: "不开！" },
@@ -584,9 +590,8 @@ function enterShopNotShunLu(state) {
 function enterPhaseD5(state) {
   state.phaseId = "D-5";
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setGameNodeParentCaughtEnding(state);
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setGameNodeParentCaughtEnding(state);
   }
   return setGameNode(state, {
     nodeId: "event_hotel_choice",
@@ -618,13 +623,28 @@ function enterShopGoWhere(state) {
 function enterPhaseD3(state) {
   state.phaseId = "D-3";
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setGameNodeParentCaughtEnding(state);
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setGameNodeParentCaughtEnding(state);
   }
 
-  const wardrobe = state.run.wardrobeCosplays || [];
-  const options = wardrobe.map((id) => ({ value: id, label: String(id) }));
+  var wardrobe = state.run.wardrobeCosplays || [];
+  var options = [];
+  for (var wi = 0; wi < wardrobe.length; wi++) {
+    options.push({ value: wardrobe[wi], label: String(wardrobe[wi]) });
+  }
+
+  var choices = [
+    {
+      choiceId: "prep_pick",
+      label: "就决定是你了！",
+      primary: true,
+    },
+    { choiceId: "prep_skip", label: "还是算了，游客，启动！" },
+  ];
+  if (state.run.isTourist) {
+    choices[0].disabled = true;
+    choices[0].disabledHint = "你在此之前已经选择了以游客的形式参与";
+  }
 
   return setGameNode(state, {
     nodeId: "event_prep",
@@ -635,42 +655,31 @@ function enterPhaseD3(state) {
       label: "选择cos服",
       options: options.length ? options : [{ value: "", label: "（无可选cos）" }],
     },
-    choices: [
-      {
-        choiceId: "prep_pick",
-        label: "就决定是你了！",
-        primary: true,
-        ...(state.run.isTourist ? { disabled: true, disabledHint: "你在此之前已经选择了以游客的形式参与" } : {}),
-      },
-      { choiceId: "prep_skip", label: "还是算了，游客，启动！" },
-    ],
+    choices: choices,
   });
 }
 
 function enterPhaseD1(state) {
   state.phaseId = "D-1";
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setGameNodeParentCaughtEnding(state);
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setGameNodeParentCaughtEnding(state);
   }
 
   state.run.energy = 100;
   state.energy = 100;
-  // travel energy deduction
-  const mode = state.run.travelMode;
-  const delta =
+  var mode = state.run.travelMode;
+  var delta =
     mode === "selfDrive" ? -30 : mode === "hardSeat" ? -60 : mode === "highSpeedRail" ? -30 : mode === "flight" ? -20 : 0;
   state.run.energy = clamp01to100(state.run.energy + delta);
   updateHudText(state);
   if (checkAndEndLoveYourselfIfNeeded(state)) return;
 
-  // enter travel
   setGameNode(state, {
     nodeId: "event_to_venue",
     title: "马O途中",
     text:
-      `你通过${modeLabel(mode)}，经过了几个小时的路程之后，终于到达了省城。\n看着省城里的高楼大厦，你很感慨。你也梦想着有朝一日，能够在这样的大城市里生活。`,
+      "你通过" + modeLabel(mode) + "，经过了几个小时的路程之后，终于到达了省城。\n看着省城里的高楼大厦，你很感慨。你也梦想着有朝一日，能够在这样的大城市里生活。",
     choices: [{ choiceId: "to_venue_arrive", label: "到达目的地", primary: true }],
   });
 }
@@ -699,18 +708,18 @@ function enterEventDinner(state) {
 }
 
 function enterEventHotel(state) {
-  const hotelId = state.run.hotelId;
+  var hotelId = state.run.hotelId;
   return setGameNode(state, {
     nodeId: "event_hotel",
     title: "入住酒店",
     text:
-      `吃过晚饭，你入住了${hotelIdLabel(hotelId)}。你放下背包，简单洗了个澡，准备睡觉。\n你此刻感觉充满了信心。`,
+      "吃过晚饭，你入住了" + hotelIdLabel(hotelId) + "。你放下背包，简单洗了个澡，准备睡觉。\n你此刻感觉充满了信心。",
     choices: [{ choiceId: "hotel_next_day", label: "迎接第二天", primary: true }],
   });
 }
 
 function hotelIdLabel(hotelId) {
-  const map = {
+  var map = {
     RuSiHaoWeiDeng: "瑞思豪威登",
     HuaTing40: "华庭4.0",
     RuLaiJingXuan: "如来精选",
@@ -721,23 +730,19 @@ function hotelIdLabel(hotelId) {
 
 function enterPhaseMorning(state) {
   state.phaseId = "那一天的早上";
-  // Parent check
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setGameNodeParentCaughtEnding(state);
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setGameNodeParentCaughtEnding(state);
   }
-  // Company check
   if (isOffice(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForOffice(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setEnding(state, "workWhy");
+    var p2 = specialProbForOffice(state.run.specialId);
+    if (Math.random() < p2) return setEnding(state, "workWhy");
   }
 
-  const hasCos = state.run.backpackCosplays.length > 0;
-  const hasMakeupBooked = !!state.run.makeupBookedTime;
+  var hasCos = state.run.backpackCosplays.length > 0;
+  var hasMakeupBooked = !!state.run.makeupBookedTime;
 
-  const choices = [];
+  var choices = [];
   if (!hasCos && !hasMakeupBooked) {
     choices.push({ choiceId: "morning_direct", label: "直接出发", primary: true });
   }
@@ -757,14 +762,12 @@ function enterPhaseMorning(state) {
     title: "那一天的早上",
     text:
       "早上起来，你看着楼下三三两两地出现了一些coser，你很开心，你也想加入他们，可你和他们......真的很熟吗？",
-    choices,
+    choices: choices,
   });
 }
 
 function enterEventToMakeup(state) {
-  // 1/30 chance: makeup artist runs away
   if (Math.random() < 1 / 30) {
-    unlockAchievement("makeup_run");
     return setGameNode(state, {
       nodeId: "event_makeup_runaway",
       title: "妆娘跑路了！",
@@ -785,60 +788,57 @@ function getMakeupEnergyDelta(bookedTime) {
 }
 
 function enterEventAfterMakeup(state) {
-  const bookedTime = state.run.makeupBookedTime;
-  const energyDelta = getMakeupEnergyDelta(bookedTime);
-  const energyText =
-    energyDelta === 0 ? "你的精力值没有变化。" : `你的精力值${energyDelta}。`;
+  var bookedTime = state.run.makeupBookedTime;
+  var energyDelta = getMakeupEnergyDelta(bookedTime);
+  var energyText =
+    energyDelta === 0 ? "你的精力值没有变化。" : "你的精力值" + energyDelta + "。";
 
   return setGameNode(state, {
     nodeId: "event_after_makeup",
     title: "化妆完成",
     text:
-      `化妆结束后，你看着镜子里的自己，心情复杂又有点兴奋。\n你预约的是当天${bookedTime}:00的化妆，整个化妆过程花费了1个小时。${energyText}`,
+      "化妆结束后，你看着镜子里的自己，心情复杂又有点兴奋。\n你预约的是当天" + bookedTime + ":00的化妆，整个化妆过程花费了1个小时。" + energyText,
     choices: [{ choiceId: "after_makeup_depart", label: "准备出发", primary: true }],
   });
 }
 
 function applyMakeupEnergyAndTime(state) {
-  const time = state.run.makeupBookedTime;
-  // Spec: energy deduction based on makeup time
-  const energyDelta = getMakeupEnergyDelta(time);
-  state.run.energy = clamp01to100((state.run.energy ?? 0) + energyDelta);
-  // Makeup takes 1 hour
+  var time = state.run.makeupBookedTime;
+  var energyDelta = getMakeupEnergyDelta(time);
+  state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + energyDelta);
   state.run.timeMinutes = time * 60 + 60;
   state.run.makeupDone = true;
-  // Clear booking? keep it for record; not required for logic.
 }
 
 function rollDice() {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-const DICE_FACES = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+var DICE_FACES = ["\u2680", "\u2681", "\u2682", "\u2683", "\u2684", "\u2685"];
 
-function enterDiceRoll(state, { title, onWin, onLose, onDraw }) {
-  state.run.pendingDice = { onWin, onLose, onDraw };
+function enterDiceRoll(state, opts) {
+  state.run.pendingDice = { onWin: opts.onWin, onLose: opts.onLose, onDraw: opts.onDraw };
   setGameNode(state, {
     nodeId: "dice_roll",
-    title,
+    title: opts.title,
     text: "你决定正面应对，和对方来一场骰子对决。",
     choices: [{ choiceId: "dice_roll_go", label: "掷骰子！", primary: true }],
   });
 }
 
 function enterDiceResult(state, playerRoll, opponentRoll) {
-  let resultKey;
+  var resultKey;
   if (playerRoll > opponentRoll) resultKey = "onWin";
   else if (playerRoll < opponentRoll) resultKey = "onLose";
   else resultKey = "onDraw";
 
-  const next = state.run.pendingDice[resultKey];
-  const desc = playerRoll > opponentRoll ? "你赢了！" : playerRoll < opponentRoll ? "你输了......" : "平局。";
+  var next = state.run.pendingDice[resultKey];
+  var desc = playerRoll > opponentRoll ? "你赢了！" : playerRoll < opponentRoll ? "你输了......" : "平局。";
 
   setGameNode(state, {
     nodeId: "dice_result",
     title: "骰子结果",
-    text: `你掷出了 ${DICE_FACES[playerRoll - 1]}${playerRoll}，对手掷出了 ${DICE_FACES[opponentRoll - 1]}${opponentRoll}。\n${desc}`,
+    text: "你掷出了 " + DICE_FACES[playerRoll - 1] + playerRoll + "，对手掷出了 " + DICE_FACES[opponentRoll - 1] + opponentRoll + "。\n" + desc,
     choices: [{ choiceId: "dice_result_next", label: "继续", primary: true, payload: next }],
   });
 }
@@ -846,29 +846,21 @@ function enterDiceResult(state, playerRoll, opponentRoll) {
 function enterPhaseSubway(state) {
   state.phaseId = "在地铁上";
 
-  // If time is not set yet (direct/prepare), set baseline 9:00 by default.
   if (state.run.timeMinutes == null) state.run.timeMinutes = 9 * 60;
 
-  // Parent check
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setEnding(state, "hopeMature");
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setEnding(state, "hopeMature");
   }
 
-  // Company check
   if (isOffice(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForOffice(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setEnding(state, "workWhy");
+    var p2 = specialProbForOffice(state.run.specialId);
+    if (Math.random() < p2) return setEnding(state, "workWhy");
   }
 
-  // Gender event:
-  // user clarified apply10_then_50: first 10% decide whether any gender event happens;
-  // if triggered then 50% pick the corresponding event, otherwise 风平浪静.
-  const gender = state.run.gender;
-  const trigger10 = Math.random() < 0.5;
-  let nextNode = "wind";
+  var gender = state.run.gender;
+  var trigger10 = Math.random() < 0.5;
+  var nextNode = "wind";
   if (trigger10) {
     if (gender === 0) {
       nextNode = Math.random() < 0.8 ? "not_man_woman" : "wind";
@@ -887,7 +879,7 @@ function enterEventNotManWoman(state) {
     nodeId: "event_not_man_woman",
     title: "不男不女",
     text:
-      `你穿着赛马娘的cos服，这时一个看起来不怀好意的老大爷走过来，突然指着你，质问你「男的女的？穿这种日本动漫的衣服干什么？你是什么目的？」`,
+      "你穿着赛马娘的cos服，这时一个看起来不怀好意的老大爷走过来，突然指着你，质问你「男的女的？穿这种日本动漫的衣服干什么？你是什么目的？」",
     choices: [
       {
         choiceId: "not_man_woman_ignore",
@@ -939,32 +931,25 @@ function enterPhaseOnlyWelcome(state) {
   }
   updateHudText(state);
 
-  // Parent check
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setEnding(state, "hopeMature");
-    // If not hit, wait 1 hour then recheck
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setEnding(state, "hopeMature");
     if (state.run.timeMinutes != null) state.run.timeMinutes += 60;
-    const hit2 = Math.random() < p;
-    if (hit2) return setEnding(state, "hopeMature");
+    if (Math.random() < p) return setEnding(state, "hopeMature");
   }
 
-  // Company check
   if (isOffice(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForOffice(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setEnding(state, "workWhy");
+    var p2 = specialProbForOffice(state.run.specialId);
+    if (Math.random() < p2) return setEnding(state, "workWhy");
     if (state.run.timeMinutes != null) state.run.timeMinutes += 60;
-    const hit2 = Math.random() < p;
-    if (hit2) return setEnding(state, "workWhy");
+    if (Math.random() < p2) return setEnding(state, "workWhy");
   }
 
   if (state.run.timeMinutes < 10 * 60) {
     return setGameNode(state, {
       nodeId: "node_wait",
       title: "稍作等待",
-      text: `现在时间是${formatTimeHHMM(state.run.timeMinutes)}，你决定稍作等待，等到10点准时进入。`,
+      text: "现在时间是" + formatTimeHHMM(state.run.timeMinutes) + "，你决定稍作等待，等到10点准时进入。",
       choices: [{ choiceId: "wait_set_10", label: "继续", primary: true }],
     });
   }
@@ -977,17 +962,15 @@ function calcEasterWeight(missCount) {
 }
 
 function enterExhibitionEvent(state) {
-  // if time reached 18:00 -> after event
   if (state.run.timeMinutes >= 18 * 60) {
     return enterPhaseAfterOnly(state);
   }
 
-  // Time decay: -2 recognition per slot
-  state.run.recognition = clamp01to100((state.run.recognition ?? 0) - 2);
+  state.run.recognition = clamp01to100((state.run.recognition != null ? state.run.recognition : 0) - 2);
   updateHudText(state);
   if (checkAndEndNoOneLikesMeIfNeeded(state)) return;
 
-  const eventId = weightedPick(
+  var eventId = weightedPick(
     [
       { id: "wind", weight: 2 },
       { id: "post", weight: 55 },
@@ -996,17 +979,16 @@ function enterExhibitionEvent(state) {
       { id: "expansion", weight: 10 },
       { id: "paincar_approved", weight: 10 },
       { id: "no_makeup", weight: 10 },
-      { id: "pixel_easter", weight: calcEasterWeight(state.pixelMissCount ?? 0) },
-      { id: "zoom_zoom", weight: calcEasterWeight(state.zoomMissCount ?? 0) },
+      { id: "pixel_easter", weight: calcEasterWeight(state.pixelMissCount != null ? state.pixelMissCount : 0) },
+      { id: "zoom_zoom", weight: calcEasterWeight(state.zoomMissCount != null ? state.zoomMissCount : 0) },
     ],
     Math.random,
   );
 
-  // Resolve redirections
-  const variant = resolveExhibitionEventVariant(state, eventId);
-  const isEasterEgg = variant.nodeId === "ex_has_pin" || variant.nodeId === "ex_zoom_zoom";
-  const autoDisableMs = variant.nodeId === "ex_stage_program" ? 3000 : isEasterEgg ? 3000 : 0;
-  setGameNode(state, {
+  var variant = resolveExhibitionEventVariant(state, eventId);
+  var isEasterEgg = variant.nodeId === "ex_has_pin" || variant.nodeId === "ex_zoom_zoom";
+  var autoDisableMs = variant.nodeId === "ex_stage_program" ? 3000 : isEasterEgg ? 3000 : 0;
+  var nodeOpts = {
     nodeId: variant.nodeId,
     title: variant.title,
     text: formatText(variant.text, {
@@ -1015,8 +997,9 @@ function enterExhibitionEvent(state) {
       painCarStyle: state.run.painCarStyle,
     }),
     choices: variant.choices,
-    ...(autoDisableMs > 0 ? { autoDisableMs } : {}),
-  });
+  };
+  if (autoDisableMs > 0) nodeOpts.autoDisableMs = autoDisableMs;
+  setGameNode(state, nodeOpts);
   if (variant.nodeId === "ex_zoom_zoom") {
     playBgm(AUDIO_MAP.zoomZoom);
   }
@@ -1027,12 +1010,12 @@ function enterExhibitionEvent(state) {
 }
 
 function resolveExhibitionEventVariant(state, eventId) {
-  const timeText = formatTimeHHMM(state.run.timeMinutes ?? 0);
-  const backpackHasCos = hasBackpackCosplay(state);
-  const hasPainCar = state.run.painCarId && state.run.painCarId !== "none";
-  const selfDrive = state.run.travelMode === "selfDrive";
+  var timeText = formatTimeHHMM(state.run.timeMinutes != null ? state.run.timeMinutes : 0);
+  var backpackHasCos = hasBackpackCosplay(state);
+  var hasPainCar = state.run.painCarId && state.run.painCarId !== "none";
+  var selfDrive = state.run.travelMode === "selfDrive";
 
-  const wind = {
+  var wind = {
     nodeId: "ex_wind",
     title: "风平浪静",
     text: "这段时间似乎什么都没发生，你选择继续游场。",
@@ -1059,7 +1042,7 @@ function resolveExhibitionEventVariant(state, eventId) {
     return {
       nodeId: "ex_post",
       title: "被集邮了！",
-      text: `有人觉得你cos的{{cosplay}}很好看，他想要和你合影。`,
+      text: "有人觉得你cos的{{cosplay}}很好看，他想要和你合影。",
       choices: [
         { choiceId: "ex_post_btn1", label: "合影并递上周边（认可度+5，周边数量-1）", primary: true, requiresBadges: 1 },
         { choiceId: "ex_post_btn2", label: "合影（认可度+3）" },
@@ -1085,7 +1068,7 @@ function resolveExhibitionEventVariant(state, eventId) {
       nodeId: "ex_stage_program",
       title: "喜欢的舞台节目",
       text: "你看到了非常喜欢的舞台节目，他的舞姿如此有张力，以至于你感到精神都升华到了新的境界。",
-      choices: [{ choiceId: "ex_stage_btn1", label: "きみの愛馬が!", primary: true }],
+      choices: [{ choiceId: "ex_stage_btn1", label: "\u304D\u307F\u306E\u611B\u99AC\u304C!", primary: true }],
     };
   }
 
@@ -1104,14 +1087,14 @@ function resolveExhibitionEventVariant(state, eventId) {
 
   if (eventId === "paincar_approved") {
     if (!selfDrive) {
-      const painCar = CAR_MODELS[randInt(0, CAR_MODELS.length - 1)];
-      const painCarLabel = getCarLabel(painCar.id);
-      const painUma = UMA_NAMES[randInt(0, UMA_NAMES.length - 1)];
+      var painCar = CAR_MODELS[randInt(0, CAR_MODELS.length - 1)];
+      var painCarLabel = getCarLabel(painCar.id);
+      var painUma = UMA_NAMES[randInt(0, UMA_NAMES.length - 1)];
       return {
         nodeId: "ex_paincar_unapproved",
         title: "这车真帅吧",
         text:
-          `你看到了一辆${painCarLabel}的${painUma}痛车，非常喜欢。你对车主表达了赞叹，并想要拍一张照片。`,
+          "你看到了一辆" + painCarLabel + "的" + painUma + "痛车，非常喜欢。你对车主表达了赞叹，并想要拍一张照片。",
         choices: [
           { choiceId: "ex_pain_btn1", label: "拍照并递上周边（认可度+5，周边数量-1）", primary: true, requiresBadges: 1 },
           { choiceId: "ex_pain_btn2", label: "拍照（认可度+1）" },
@@ -1119,24 +1102,19 @@ function resolveExhibitionEventVariant(state, eventId) {
         ],
       };
     }
-    // self drive: show paincar approved event (text uses placeholders)
     return {
       nodeId: "ex_paincar_approved",
       title: "痛车得到认可",
-      text: `你的{{painCarModel}}的{{painCarStyle}}痛车得到了极大的认可，有coser和你的痛车合影，而且还大赞你的痛车十分有品。`,
+      text: "你的{{painCarModel}}的{{painCarStyle}}痛车得到了极大的认可，有coser和你的痛车合影，而且还大赞你的痛车十分有品。",
       choices: [{ choiceId: "ex_pain_approved_btn1", label: "感谢他（认可度+10）", primary: true }],
     };
   }
 
   if (eventId === "no_makeup") {
-    const cosInBackpack = backpackHasCos;
-    const makeupDone = !!state.run.makeupDone;
-    const first = !state.run.flags.noMakeupFirstUsed;
+    var cosInBackpack = backpackHasCos;
+    var makeupDone = !!state.run.makeupDone;
+    var first = !(state.run.flags && state.run.flags.noMakeupFirstUsed);
 
-    // Spec priority:
-    // - cosplay & makeup都否 => 风平浪静
-    // - cosplay与化妆都在 => 奇怪的眼神（不受“第一次触发”影响）
-    // - 只有cos在、化妆不在：只有“第一次触发”才触发没化妆......，否则仍是风平浪静
     if (!cosInBackpack && !makeupDone) {
       return wind;
     }
@@ -1145,7 +1123,7 @@ function resolveExhibitionEventVariant(state, eventId) {
       return {
         nodeId: "ex_wrong_eyes",
         title: "奇怪的眼神",
-        text: `有人觉得你cos的{{cosplay}}不还原，和同伴小声嘀咕，意图将你挂到网上。`,
+        text: "有人觉得你cos的{{cosplay}}不还原，和同伴小声嘀咕，意图将你挂到网上。",
         choices: [
           { choiceId: "ex_wrong_btn1", label: "掷骰子！", primary: true },
           { choiceId: "ex_wrong_btn2", label: "不阻止（认可度-40）" },
@@ -1173,11 +1151,10 @@ function resolveExhibitionEventVariant(state, eventId) {
   }
 
   if (eventId === "pixel_easter") {
-    const good = isPhonePixel(state);
-    if (!good || state.run.flags.easterHasPinUsed) return wind;
+    var good = isPhonePixel(state);
+    if (!good || (state.run.flags && state.run.flags.easterHasPinUsed)) return wind;
     state.run.flags.easterHasPinUsed = true;
     state.pixelMissCount = 0;
-    unlockAchievement("pixel");
     return {
       nodeId: "ex_has_pin",
       title: "有品！",
@@ -1190,15 +1167,14 @@ function resolveExhibitionEventVariant(state, eventId) {
   }
 
   if (eventId === "zoom_zoom") {
-    const mazda = isPainCarMazda(state);
-    const sd = state.run.travelMode === "selfDrive";
-    const used = !!state.run.flags.easterZoomZoomUsed;
+    var mazda = isPainCarMazda(state);
+    var sd = state.run.travelMode === "selfDrive";
+    var used = !!(state.run.flags && state.run.flags.easterZoomZoomUsed);
     console.log("[zoom_zoom] mazda=%s sd=%s used=%s label=%s mode=%s", mazda, sd, used, state.run.painCarLabel, state.run.travelMode);
-    const ok = mazda && sd;
+    var ok = mazda && sd;
     if (!ok || used) return wind;
     state.run.flags.easterZoomZoomUsed = true;
     state.zoomMissCount = 0;
-    unlockAchievement("mazda");
     return {
       nodeId: "ex_zoom_zoom",
       title: "Zoom-Zoom",
@@ -1217,14 +1193,12 @@ function enterPhaseAfterOnly(state) {
   state.phaseId = "马O之后";
 
   if (isHighSchool(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForParent(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setEnding(state, "hopeMature");
+    var p = specialProbForParent(state.role.specialId);
+    if (Math.random() < p) return setEnding(state, "hopeMature");
   }
   if (isOffice(state.role) && state.run.specialId !== "none") {
-    const p = specialProbForOffice(state.role.specialId);
-    const hit = Math.random() < p;
-    if (hit) return setEnding(state, "workWhy");
+    var p2 = specialProbForOffice(state.run.specialId);
+    if (Math.random() < p2) return setEnding(state, "workWhy");
   }
 
   return setGameNode(state, {
@@ -1241,10 +1215,10 @@ function enterPhaseAfterOnly(state) {
 function enterPhaseGoHome(state) {
   state.phaseId = "各回各家";
 
-  const mode = state.run.travelMode;
-  const delta =
+  var mode = state.run.travelMode;
+  var delta =
     mode === "selfDrive" ? -30 : mode === "hardSeat" ? -60 : mode === "highSpeedRail" ? -30 : mode === "flight" ? -20 : 0;
-  state.run.energy = clamp01to100((state.run.energy ?? 0) + delta);
+  state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + delta);
   updateHudText(state);
   if (checkAndEndLoveYourselfIfNeeded(state)) return;
 
@@ -1252,13 +1226,13 @@ function enterPhaseGoHome(state) {
     nodeId: "event_go_home",
     title: "各回各家",
     text:
-      `你通过${modeLabel(mode)}，经过了几个小时的路程之后，终于回到了小县城。\n回想着今天经历的一切，你的泪水慢慢地滑了出来。你不知道以后还有没有机会和他们见面。`,
+      "你通过" + modeLabel(mode) + "，经过了几个小时的路程之后，终于回到了小县城。\n回想着今天经历的一切，你的泪水慢慢地滑了出来。你不知道以后还有没有机会和他们见面。",
     choices: [{ choiceId: "home_arrive_end", label: "到达目的地", primary: true }],
   });
 }
 
 function resolveEndByRecognition(state) {
-  const r = state.run.recognition ?? 0;
+  var r = state.run.recognition != null ? state.run.recognition : 0;
   if (r <= 0) return setEnding(state, "noOneLikesMe");
   if (r >= 80) return setEnding(state, "superStar");
   if (r >= 50) return setEnding(state, "nextTime");
@@ -1267,15 +1241,16 @@ function resolveEndByRecognition(state) {
 }
 
 function applyHotelEnergy(state) {
-  const delta = getHotelEnergyDelta(state.run.hotelId);
-  state.run.energy = clamp01to100((state.run.energy ?? 0) + delta);
+  var delta = getHotelEnergyDelta(state.run.hotelId);
+  state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + delta);
 }
 
-function dispatch(actionId, ctx = {}) {
-  const state = window.__maoState;
+// ── Main action handler ──────────────────────────────────────────
+function dispatch(actionId, ctx) {
+  if (!ctx) ctx = {};
+  var state = window.__maoState;
   if (!state) return;
 
-  // Record action to log
   if (!state.actionsLog) state.actionsLog = [];
   state.actionsLog.push({
     time: new Date().toISOString(),
@@ -1291,7 +1266,6 @@ function dispatch(actionId, ctx = {}) {
 
   if (actionId === "restart") {
     stopBgm();
-    clearGame();
     window.__maoState = createDefaultState();
     bindUI({ onAction: dispatch });
     render(window.__maoState);
@@ -1310,7 +1284,6 @@ function dispatch(actionId, ctx = {}) {
       state.select = null;
       state.rerollCount = 0;
       state.derDismissed = false;
-      saveGame(state);
       render(state);
     }
     return;
@@ -1318,28 +1291,24 @@ function dispatch(actionId, ctx = {}) {
 
   if (state.screen === "roleSelect") {
     if (actionId === "roll_role" || actionId === "roll_role_again") {
-      if (actionId === "roll_role_again") state.rerollCount = (state.rerollCount ?? 0) + 1;
-      const genderVal = state.genderSelect ?? 0;
+      if (actionId === "roll_role_again") state.rerollCount = (state.rerollCount != null ? state.rerollCount : 0) + 1;
+      var genderVal = state.genderSelect != null ? state.genderSelect : 0;
       state.role = createRoleSelection(genderVal, Math.random);
-      saveGame(state);
       render(state);
     }
     if (actionId === "select_gender") {
-      const val = Number(ctx.payload);
+      var val = Number(ctx.payload);
       state.genderSelect = (val === 0 || val === 1) ? val : null;
       state.role = createRoleSelection(state.genderSelect, Math.random);
-      saveGame(state);
       render(state);
     }
     if (actionId === "dismiss_der") {
       state.derDismissed = true;
-      saveGame(state);
       render(state);
     }
     if (actionId === "enter_game") {
-      if (!state.role?.frozen) return;
+      if (!(state.role && state.role.frozen)) return;
       if (state.genderSelect == null) {
-        unlockAchievement("walmart_bag");
         setModal(true, { title: "错误", body: "您还未选择性别，请选择一个性别来继续游戏。", confirmLabel: "好" });
         return;
       }
@@ -1359,9 +1328,7 @@ function dispatch(actionId, ctx = {}) {
   }
 
   if (state.screen === "game") {
-    // Handle based on nodeId
     switch (state.nodeId) {
-      // Main gates
       case "good_want_enzao_gate":
         if (actionId === "choice_good_want_go") return enterShopEnzao(state);
         if (actionId === "choice_good_want_skip") return setEnding(state, "neverStartDream");
@@ -1385,9 +1352,9 @@ function dispatch(actionId, ctx = {}) {
       case "shop_taobao":
         if (actionId === "shop_taobao_skip") return enterPhaseD10(state);
         if (actionId === "shop_taobao_reroll") return enterShopTaobao(state);
-        if (actionId.startsWith("buy_cos_")) {
-          const idx = parseInt(actionId.replace("buy_cos_", ""), 10);
-          const name = state.run.shopCosOptions?.[idx];
+        if (actionId.indexOf("buy_cos_") === 0) {
+          var idx = parseInt(actionId.replace("buy_cos_", ""), 10);
+          var name = state.run.shopCosOptions && state.run.shopCosOptions[idx];
           if (!name) break;
           if (!requireMoneyOrModal(state, 500)) return;
           state.run.wardrobeCosplays.push(name);
@@ -1403,7 +1370,7 @@ function dispatch(actionId, ctx = {}) {
             body: "确定不约妆吗？这之后你将以游客形态去到马娘Only。",
             confirmLabel: "正合我意",
             cancelLabel: "我再想想",
-            onConfirm: () => {
+            onConfirm: function () {
               setModal(false);
               state.run.isTourist = true;
               enterPhaseD7(state);
@@ -1417,7 +1384,7 @@ function dispatch(actionId, ctx = {}) {
             body: "确定约妆吗？这之后你将以coser形态去到马娘Only。",
             confirmLabel: "正合我意",
             cancelLabel: "我再想想",
-            onConfirm: () => {
+            onConfirm: function () {
               setModal(false);
               enterShopMakeup(state);
             },
@@ -1524,7 +1491,7 @@ function dispatch(actionId, ctx = {}) {
         }
         break;
 
-      case "event_prep": {
+      case "event_prep":
         if (actionId === "prep_skip") {
           if (state.run.makeupBookedTime == null) return enterPhaseD1(state);
           setModal(true, {
@@ -1532,7 +1499,6 @@ function dispatch(actionId, ctx = {}) {
             body: "可是你已经约了化妆师诶……",
             confirmLabel: "确认",
           });
-          // keep node
           return;
         }
 
@@ -1545,18 +1511,16 @@ function dispatch(actionId, ctx = {}) {
             });
             return;
           }
-          const selected = ctx.selectedValue;
+          var selected = ctx.selectedValue;
           if (!selected) return enterPhaseD1(state);
-          // Move selected cosplay from wardrobe to backpack
-          const idx = state.run.wardrobeCosplays.indexOf(selected);
-          if (idx >= 0) {
-            state.run.wardrobeCosplays.splice(idx, 1);
+          var selIdx = state.run.wardrobeCosplays.indexOf(selected);
+          if (selIdx >= 0) {
+            state.run.wardrobeCosplays.splice(selIdx, 1);
             state.run.backpackCosplays.push(selected);
           }
           return enterPhaseD1(state);
         }
         break;
-      }
 
       case "event_to_venue":
         if (actionId === "to_venue_arrive") return enterEventDinner(state);
@@ -1564,7 +1528,7 @@ function dispatch(actionId, ctx = {}) {
 
       case "event_dinner":
         if (actionId === "dinner_skip") {
-          state.run.energy = clamp01to100((state.run.energy ?? 0) - 20);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) - 20);
           updateHudText(state);
           if (checkAndEndLoveYourselfIfNeeded(state)) return;
           return enterEventHotel(state);
@@ -1572,21 +1536,21 @@ function dispatch(actionId, ctx = {}) {
         if (actionId === "dinner_barbeque") {
           if (!requireMoneyOrModal(state, 80)) return;
           state.run.money -= 80;
-          state.run.energy = clamp01to100((state.run.energy ?? 0) + 40);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + 40);
           updateHudText(state);
           return enterEventHotel(state);
         }
         if (actionId === "dinner_mcn") {
           if (!requireMoneyOrModal(state, 40)) return;
           state.run.money -= 40;
-          state.run.energy = clamp01to100((state.run.energy ?? 0) + 20);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + 20);
           updateHudText(state);
           return enterEventHotel(state);
         }
         if (actionId === "dinner_mala") {
           if (!requireMoneyOrModal(state, 20)) return;
           state.run.money -= 20;
-          state.run.energy = clamp01to100((state.run.energy ?? 0) + 10);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + 10);
           updateHudText(state);
           return enterEventHotel(state);
         }
@@ -1603,7 +1567,7 @@ function dispatch(actionId, ctx = {}) {
 
       case "event_morning":
         if (actionId === "morning_direct" || actionId === "morning_direct_fallback") {
-          state.run.timeMinutes = 9 * 60; // baseline
+          state.run.timeMinutes = 9 * 60;
           return enterPhaseSubway(state);
         }
         if (actionId === "morning_prepare") {
@@ -1617,9 +1581,8 @@ function dispatch(actionId, ctx = {}) {
 
       case "event_makeup_runaway":
         if (actionId === "makeup_runaway_grit") {
-          // makeupDone stays false; advance time by 2 hours from booked slot
           state.run.makeupDone = false;
-          const bookedBase = (state.run.makeupBookedTime ?? 9) * 60;
+          var bookedBase = (state.run.makeupBookedTime != null ? state.run.makeupBookedTime : 9) * 60;
           state.run.timeMinutes = bookedBase + 120;
           updateHudText(state);
           return enterPhaseSubway(state);
@@ -1643,16 +1606,15 @@ function dispatch(actionId, ctx = {}) {
 
       case "event_not_man_woman":
         if (actionId === "not_man_woman_ignore") {
-          state.run.energy = clamp01to100((state.run.energy ?? 0) - 10);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) - 10);
           state.run.timeMinutes += 30;
           updateHudText(state);
           if (checkAndEndLoveYourselfIfNeeded(state)) return;
           return enterPhaseOnlyWelcome(state);
         }
         if (actionId === "not_man_woman_explain") {
-          const hit = Math.random() < 0.7;
-          if (hit) {
-            unlockAchievement("super_brave");
+          var hit1 = Math.random() < 0.7;
+          if (hit1) {
             return setGameNode(state, {
               nodeId: "event_do_whatever",
               title: "干什么！",
@@ -1663,7 +1625,7 @@ function dispatch(actionId, ctx = {}) {
               ],
             });
           }
-          state.run.energy = clamp01to100((state.run.energy ?? 0) - 20);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) - 20);
           state.run.timeMinutes += 30;
           updateHudText(state);
           if (checkAndEndLoveYourselfIfNeeded(state)) return;
@@ -1673,16 +1635,15 @@ function dispatch(actionId, ctx = {}) {
 
       case "event_man_flirt":
         if (actionId === "man_flirt_ignore") {
-          state.run.energy = clamp01to100((state.run.energy ?? 0) - 10);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) - 10);
           state.run.timeMinutes += 30;
           updateHudText(state);
           if (checkAndEndLoveYourselfIfNeeded(state)) return;
           return enterPhaseOnlyWelcome(state);
         }
         if (actionId === "man_flirt_refuse") {
-          const hit = Math.random() < 0.7;
-          if (hit) {
-            unlockAchievement("heroine");
+          var hit2 = Math.random() < 0.7;
+          if (hit2) {
             return setGameNode(state, {
               nodeId: "event_brave_no",
               title: "勇敢说不",
@@ -1693,7 +1654,7 @@ function dispatch(actionId, ctx = {}) {
               ],
             });
           }
-          state.run.energy = clamp01to100((state.run.energy ?? 0) - 20);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) - 20);
           state.run.timeMinutes += 30;
           updateHudText(state);
           if (checkAndEndLoveYourselfIfNeeded(state)) return;
@@ -1724,7 +1685,6 @@ function dispatch(actionId, ctx = {}) {
         }
         break;
 
-      // Exhibition events (return to OnlyWelcome)
       case "ex_wind":
         if (actionId === "ex_wind_continue") {
           state.run.recognition = clamp01to100(state.run.recognition - 5);
@@ -1813,7 +1773,7 @@ function dispatch(actionId, ctx = {}) {
 
       case "ex_stage_program":
         if (actionId === "ex_stage_btn1") {
-          state.run.energy = clamp01to100((state.run.energy ?? 0) + 10);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + 10);
           state.run.timeMinutes += 30;
           updateHudText(state);
           if (checkAndEndLoveYourselfIfNeeded(state)) return;
@@ -1824,7 +1784,7 @@ function dispatch(actionId, ctx = {}) {
 
       case "ex_expansion":
         if (actionId === "ex_expansion_btn1") {
-          const proceed = () => {
+          var proceedExpansion = function () {
             state.run.recognition = clamp01to100(state.run.recognition + 10);
             state.run.backpackBadges = clamp(state.run.backpackBadges - 1, 0, 100000);
             state.run.timeMinutes += 30;
@@ -1833,32 +1793,20 @@ function dispatch(actionId, ctx = {}) {
             if (state.run.timeMinutes >= 18 * 60) return enterPhaseAfterOnly(state);
             return enterExhibitionEvent(state);
           };
-          var roll = Math.random();
-          if (roll < 1 / 3) {
+          if (Math.random() < 0.5) {
             setModal(true, {
               title: "关注我们",
               htmlBody:
-                "首先感谢您游玩我们的游戏，您的支持就是我们最大的动力。<br><br>" +
-                "如果您对我们的社团有着进一步的兴趣，可以通过以下方式掌握我们的最新动态：<br><br>" +
-                "QQ群：308610161 <a href=\"https://qm.qq.com/q/YQvlAiqniU\" target=\"_blank\">点击添加</a><br>" +
-                "小红书账号：ADEquipOfficial <a href=\"https://www.xiaohongshu.com/user/profile/685c15dc000000001b019187\" target=\"_blank\">点击前往</a>",
+                '首先感谢您游玩我们的游戏，您的支持就是我们最大的动力。<br><br>' +
+                '如果您对我们的社团有着进一步的兴趣，可以通过以下方式掌握我们的最新动态：<br><br>' +
+                'QQ群：308610161 <a href="https://qm.qq.com/q/YQvlAiqniU" target="_blank">点击添加</a><br>' +
+                '小红书账号：ADEquipOfficial <a href="https://www.xiaohongshu.com/user/profile/685c15dc000000001b019187" target="_blank">点击前往</a>',
               confirmLabel: "好",
-              onConfirm: () => { setModal(false); proceed(); },
-            });
-            return;
-          } else if (roll < 2 / 3) {
-            setModal(true, {
-              title: "也看看其他的社团？",
-              htmlBody: 
-              "首先感谢您游玩我们的游戏，您的支持就是我们最大的动力。<br><br>" +
-              "这里推荐一批同样很棒的同人社团和作者：<br><br>" +
-              "CY还我血汗钱 QQ群：1039520736 <a href=\"https://qm.qq.com/q/vo8kGr0MV4\" target=\"_blank\">点击添加</a><br>",
-              confirmLabel: "好",
-              onConfirm: () => { setModal(false); proceed(); },
+              onConfirm: function () { setModal(false); proceedExpansion(); },
             });
             return;
           }
-          return proceed();
+          return proceedExpansion();
         }
         if (actionId === "ex_expansion_btn3") {
           state.run.recognition = clamp01to100(state.run.recognition + 3);
@@ -1936,7 +1884,7 @@ function dispatch(actionId, ctx = {}) {
         }
         if (actionId === "ex_wrong_btn3") {
           state.run.recognition = clamp01to100(state.run.recognition - 20);
-          state.run.energy = clamp01to100((state.run.energy ?? 0) - 20);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) - 20);
           state.run.timeMinutes += 30;
           updateHudText(state);
           if (checkAndEndNoOneLikesMeIfNeeded(state)) return;
@@ -1965,7 +1913,7 @@ function dispatch(actionId, ctx = {}) {
         }
         if (actionId === "ex_no_makeup_btn3") {
           state.run.recognition = clamp01to100(state.run.recognition - 20);
-          state.run.energy = clamp01to100((state.run.energy ?? 0) - 20);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) - 20);
           state.run.timeMinutes += 30;
           updateHudText(state);
           if (checkAndEndNoOneLikesMeIfNeeded(state)) return;
@@ -2011,24 +1959,23 @@ function dispatch(actionId, ctx = {}) {
         }
         break;
 
-      // Dice roll
       case "dice_roll":
         if (actionId === "dice_roll_go") {
-          const playerRoll = rollDice();
-          const opponentRoll = rollDice();
+          var playerRoll = rollDice();
+          var opponentRoll = rollDice();
           return enterDiceResult(state, playerRoll, opponentRoll);
         }
         break;
 
       case "dice_result":
         if (actionId === "dice_result_next") {
-          const next = ctx.payload;
-          if (next?.action === "ending") {
+          var next = ctx.payload;
+          if (next && next.action === "ending") {
             return setEnding(state, next.ending);
           }
-          if (next?.action === "penalty") {
-            state.run.recognition = clamp01to100((state.run.recognition ?? 0) + (next.recognition || 0));
-            state.run.energy = clamp01to100((state.run.energy ?? 0) + (next.energy || 0));
+          if (next && next.action === "penalty") {
+            state.run.recognition = clamp01to100((state.run.recognition != null ? state.run.recognition : 0) + (next.recognition || 0));
+            state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + (next.energy || 0));
           }
           state.run.timeMinutes += 30;
           updateHudText(state);
@@ -2039,13 +1986,12 @@ function dispatch(actionId, ctx = {}) {
         }
         break;
 
-      // AfterOnly + GoHome
       case "event_after_only_dinner":
         if (actionId === "after_dinner_yes") {
           if (!requireMoneyOrModal(state, 50)) return;
           state.run.money -= 50;
-          state.run.energy = clamp01to100((state.run.energy ?? 0) + 30);
-          state.run.recognition = clamp01to100((state.run.recognition ?? 0) + 10);
+          state.run.energy = clamp01to100((state.run.energy != null ? state.run.energy : 0) + 30);
+          state.run.recognition = clamp01to100((state.run.recognition != null ? state.run.recognition : 0) + 10);
           updateHudText(state);
           if (checkAndEndNoOneLikesMeIfNeeded(state)) return;
           return enterPhaseGoHome(state);
@@ -2062,98 +2008,22 @@ function dispatch(actionId, ctx = {}) {
   }
 }
 
-function showBirthdayBanner() {
-  const now = new Date();
-  const today = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}`;
-  const birthdayGirls = UMA_BIRTHDAYS.filter((u) => u.bday === today);
-  if (birthdayGirls.length === 0) return;
-
-  const names = birthdayGirls.map((u) => u.name).join("、");
-  const banner = document.createElement("div");
-  banner.className = "eventBanner";
-  banner.innerHTML = `🎂 今天是赛马娘 ${names} 的生日，让我们祝她生日快乐！ 🎂`;
-  document.body.insertBefore(banner, document.body.firstChild);
-}
-
-function showAnniversaryBanner() {
-  const now = new Date();
-  const today = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}`;
-  if (today !== "06/25") return;
-
-  const banner = document.createElement("div");
-  banner.className = "eventBanner";
-  banner.innerHTML = `🎉 今天是爱丽数位装备社的成立纪念日！ 🎉`;
-  document.body.insertBefore(banner, document.body.firstChild);
-}
-
+// ── Init ─────────────────────────────────────────────────────────
 function init() {
-  applyTheme(getThemeId());
-  showBirthdayBanner();
-  showAnniversaryBanner();
   bindUI({ onAction: dispatch });
 
-  const DISMISS_KEY = "maoOnly_textAdventure_dismissRestore";
-  const savedState = loadGame();
-  const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
-
-  if (savedState && !dismissed) {
-    // 有存档且未被永久关闭：先显示主菜单，再弹窗询问
-    const defaultState = createDefaultState();
-    window.__maoState = defaultState;
-    render(defaultState);
-
-    setModal(true, {
-      title: "要恢复进度吗",
-      body: "检测到您之前的游玩被中断，从存档恢复进度还是重新开始游戏？",
-      actions: [
-        {
-          label: "恢复进度",
-          className: "primary",
-          onClick: () => {
-            window.__maoState = savedState;
-            render(savedState);
-          },
-        },
-        {
-          label: "重新开始",
-          onClick: () => {
-            // 什么都不做，已在主菜单
-          },
-        },
-        {
-          label: "关闭且不再提示",
-          onClick: () => {
-            localStorage.setItem(DISMISS_KEY, "1");
-          },
-        },
-      ],
-    });
-    return;
-  }
-
-  // 无存档 / 已永久关闭：正常加载
-  let state = savedState || createDefaultState();
-
-  // minimal migration / guards
-  if (!state.screen) state = createDefaultState();
-  if (!state.actionsLog) state.actionsLog = [];
-  if (state.pixelMissCount == null) state.pixelMissCount = 0;
-  if (state.zoomMissCount == null) state.zoomMissCount = 0;
-  if (state.run && state.run.isTourist == null) state.run.isTourist = false;
+  var state = createDefaultState();
   window.__maoState = state;
   render(state);
 }
 
-// Patch: ensure dispatch uses updated state reference
-// and fill missing functions for entering phases after initial state.
 window.__maoDispatch = dispatch;
 
 try {
   init();
 } catch (e) {
-  // Ensure the page is not totally blank on sync runtime errors.
   console.error("Fatal error:", e);
-  const app = document.getElementById("app");
+  var app = document.getElementById("app");
   if (app) {
     app.innerHTML =
       "<div class='card' style='text-align:center;'>" +
@@ -2164,4 +2034,3 @@ try {
       "</div>";
   }
 }
-

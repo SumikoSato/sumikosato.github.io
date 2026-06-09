@@ -188,12 +188,12 @@ const GitHubLink = el("a", {
 
   const versionLink = el("a", {
     href: "#",
-    text: "版本号：UmaFesSimulator 26.6.4 稳定版",
+    text: "版本号：UmaFesSimulator 26.6.9 开发版",
     onclick: (e) => {
       e.preventDefault();
       setModal(true, {
         title: "更新日志",
-        body: "UmaFesSimulator 26.6.4 稳定版 更新内容\n——添加了只有低版本浏览器用户能看见的落地页。\n——调整彩蛋事件爆率，使得成就更易获得。",
+        body: "UmaFesSimulator 26.6.9 开发版 更新内容\n——以26.6.4稳定版为基础，增加复古版本，理论最低支持Symbian Belle FP1/Android 4.0/Windows Phone 8.1/iOS 6/IE 11/Firefox 52/Chrome 49 ，使用辅助功能菜单或带参数 /?legacy 均可打开。\n——添加了一些友情链接",
         confirmLabel: "我知道了",
       });
     },
@@ -291,6 +291,15 @@ export function render(state) {
       el("p", {
         className: "lead",
         text: "今天这个时候你们应该已经在马O了吧，那种我从来没有去过的高级地方，看着那些我没见过的美丽谷子，领些那些我没领过的漂亮无料，跟各位老师近距离接触，我等你们回来，给我讲马O是有多好玩，看的开心，早点回来......去参加马O，是什么感觉......",
+      }),
+    );
+    body.appendChild(
+      el("a", {
+        className: "lead",
+        style: "display:block; color:#5EA820;",
+        href: "https://umamap.pro",
+        target: "_blank",
+        text: "想去真的马娘Only？不妨来马O地图看看>>",
       }),
     );
     body.appendChild(
@@ -661,6 +670,17 @@ export function render(state) {
     });
   });
   menu.appendChild(themeBtn);
+
+  // 切换复古版
+  const legacyBtn = document.createElement("button");
+  legacyBtn.className = "fab__item";
+  legacyBtn.textContent = "切换复古版";
+  legacyBtn.addEventListener("click", () => {
+    wrapper.classList.remove("fab--open");
+    const base = location.pathname + location.search.replace(/[?&]legacy(?:[=&#]|$)/gi, "").replace(/[?&]native(?:[=&#]|$)/gi, "").replace(/&$/, "");
+    location.href = base + (base.indexOf("?") >= 0 ? "&" : "?") + "legacy";
+  });
+  menu.appendChild(legacyBtn);
 
   // Sound toggle button
   const soundBtn = document.createElement("button");

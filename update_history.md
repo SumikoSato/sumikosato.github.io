@@ -1,3 +1,7 @@
+UmaFesSimulator 26.6.9 开发版 更新内容
+——以26.6.4稳定版为基础，增加复古版本，理论最低支持Symbian Belle FP1/Android 4.0/Windows Phone 8.1/iOS 6/IE 11/Firefox 52/Chrome 49 ，使用辅助功能菜单或带参数 /?legacy 均可打开。
+——添加了一些友情链接
+
 UmaFesSimulator 26.6.4 稳定版 更新内容
 ——添加了只有低版本浏览器用户能看见的落地页。
 ——调整彩蛋事件爆率，使得成就更易获得。
