@@ -1850,9 +1850,10 @@ function dispatch(actionId, ctx = {}) {
             setModal(true, {
               title: "也看看其他的社团？",
               htmlBody: 
-              "首先感谢您游玩我们的游戏，您的支持就是我们最大的动力。<br><br>" +
-              "这里推荐一批同样很棒的同人社团和作者：<br><br>" +
-              "CY还我血汗钱 QQ群：1039520736 <a href=\"https://qm.qq.com/q/vo8kGr0MV4\" target=\"_blank\">点击添加</a><br>",
+              "首先感谢您游玩我们的游戏，您的支持就是我们最大的动力。<br>" +
+              "这里推荐一批同样很棒的同人社团和作者：<br>" +
+              "CY还我血汗钱 QQ群：1039520736 <a href=\"https://qm.qq.com/q/vo8kGr0MV4\" target=\"_blank\">点击添加</a><br>"+
+              "马铁U彩 QQ群：2151029801 <a href=\"https://qm.qq.com/q/Rf8CbiPxCw\" target=\"_blank\">点击添加</a><br>",
               confirmLabel: "好",
               onConfirm: () => { setModal(false); proceed(); },
             });
