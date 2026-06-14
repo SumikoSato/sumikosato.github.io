@@ -265,7 +265,7 @@ function rollDice() {
 }
 
 function calcEasterWeight(missCount) {
-  return Math.min(1 + (missCount ?? 0) * 5, 30);
+  return Math.min(10 + (missCount ?? 0) * 5, 50);
 }
 
 // ── Template text substitution ───────────────────────────
@@ -1043,7 +1043,7 @@ registerNode("ex_no_makeup", (state) => {
     state.run.flags.noMakeupFirstUsed = true;
     return {
       title: "没化妆......",
-      text: "有人注意到了你，你的皮肤上似乎没有任何化妆品的痕迹。\n由于各种原因，妆娘跑路也好，忘记下单也好，总之你意识到自己没化妆被人发现了。\n而事情的展开总比你想象的还要快，他拦住了你。\n“不是，你不化妆出什么cos啊，是害怕别人不知道你长得丑吗？”他指着你的脸，唾沫星子溅到了你的脸上。\n“我告诉你，{{cosplay}}是我推，你这样做就是在侮辱她，反正今天我不把你衣服扒下来你跑不了！”对方继续张牙舞爪，甚至试图要动手......",
+      text: "有人注意到了你，你的皮肤上似乎没有任何化妆品的痕迹。\n由于各种原因，妆娘跑路也好，忘记下单也好，总之你意识到自己没化妆被人发现了。\n而事情的展开总比你想象的还要快，他拦住了你。\n“不是，你不化妆出什么cos啊，是害怕别人不知道你长得丑吗？”他指着你的脸，唾沫星子溅到了你的脸上。\n“我告诉你，这是我推，你这样做就是在侮辱她，反正今天我不把你衣服扒下来你跑不了！”对方继续张牙舞爪，甚至试图要动手......",
       choices: [
         { id: "btn1", label: "跑！（认可度-50）", primary: true, effects: { recognition: -50, timeMinutes: 30 }, next: "exhibition_loop" },
         { id: "btn2", label: "掷骰子！", next: "dice_roll" },
