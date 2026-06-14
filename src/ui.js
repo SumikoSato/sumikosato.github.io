@@ -1,6 +1,7 @@
 import { getSoundEnabled, setSoundEnabled } from "./storage.js";
 import { applyTheme, getThemeId, setThemeId, getThemeList, getThemeDesc } from "./theme.js";
 import { ACHIEVEMENTS, getUnlockedIds, unlockAchievement } from "./achievements.js";
+import { formatTimeHHMM } from "./utils.js";
 
 const app = document.getElementById("app");
 
@@ -188,12 +189,12 @@ const GitHubLink = el("a", {
 
   const versionLink = el("a", {
     href: "#",
-    text: "版本号：UmaFesSimulator 26.6.9 开发版",
+    text: "版本号：UmaFesSimulator 26.6.15 橙子果酱生日纪念版",
     onclick: (e) => {
       e.preventDefault();
       setModal(true, {
         title: "更新日志",
-        body: "UmaFesSimulator 26.6.9 开发版 更新内容\n——以26.6.4稳定版为基础，增加复古版本，理论最低支持Symbian Belle FP1/Android 4.0/Windows Phone 8.1/iOS 6/IE 11/Firefox 52/Chrome 49 ，使用辅助功能菜单或带参数 /?legacy 均可打开。\n——添加了一些友情链接",
+        body: "UmaFesSimulator 26.6.15 橙子果酱生日纪念版 更新内容\n——默认主题焕新升级，增加了由@WangMT 制作的游戏图标。\n——游戏架构升级，使用独立的故事引擎和独立的配置文件，为后续DLC功能做好准备。\n——基于全新架构大量丰富文案，充实游戏内容。(时间有限只优化了部分文案，非常私密马赛（鞠躬）（咔咔咔）)\n——解决开车时仍然会进入地铁特殊事件的问题。\n——增加了时间显示功能，方便您确认展会的剩余时间。\n——增加睡大街功能，现在你可以在马娘Only前一天睡大街了。感谢@阿道夫希尔薇 的贡献。\n——加入新游戏内容预告，敬请期待！",
         confirmLabel: "我知道了",
       });
     },
@@ -290,7 +291,7 @@ export function render(state) {
     body.appendChild(
       el("p", {
         className: "lead",
-        text: "今天这个时候你们应该已经在马O了吧，那种我从来没有去过的高级地方，看着那些我没见过的美丽谷子，领些那些我没领过的漂亮无料，跟各位老师近距离接触，我等你们回来，给我讲马O是有多好玩，看的开心，早点回来......去参加马O，是什么感觉......",
+        text: "今天这个时候你们应该已经在马O了吧，那种我从来没有去过的高级地方，看着那些我没见过的美丽谷子，领些那些我没领过的漂亮无料，跟各位老师近距离接触，我等你们回来，给我讲马O是有多好玩，看的开心，早点回来......去参加马O，是什么感觉......\n在本游戏中，您将通过不同的身份及选项，体验一个小县城coser前往马娘Only的酸甜苦辣。\n我们希望在这个简单的网页文字冒险游戏中，无论任何人，都能在游戏里找到你的影子。\n游戏内容部分基于本人及其他玩家的真实故事改编，一些细节为游戏进程做出了适应性调整。",
       }),
     );
     body.appendChild(
@@ -304,6 +305,10 @@ export function render(state) {
     );
     body.appendChild(
       el("div", { className: "controls" }, [
+         el("button", {
+          text: "DLC：社团",
+          onclick: () => dispatchAction && dispatchAction("start_doujin"),
+        }),
         el("button", {
           className: "primary",
           text: "开始游戏",
@@ -327,7 +332,7 @@ export function render(state) {
     const pre = el("div", { className: "textBlock" });
     pre.appendChild(
       el("p", {
-        text: "以下是你的角色信息，点按再次抽取来重新随机一次，相信我，你会等到好运气的。\n准备好的话，就开始吧~",
+        text: "欢迎来到马娘Only模拟器！\n请先选择一个性别，然后继续。\n以下是你的角色信息，点按再次抽取来重新随机一次，相信我，你会等到好运气的。\n准备好的话，就开始吧~",
       }),
     );
 
@@ -369,7 +374,7 @@ export function render(state) {
       list.appendChild(el("p", { text: `角色类型：${noGender ? "-" : templateLabel}` }));
       list.appendChild(el("p", { text: `金钱：${noGender ? "-" : role.money}` }));
       list.appendChild(el("p", { text: `智能手机：${noGender ? "-" : (role.phoneLabel || role.phone || "-")}` }));
-      list.appendChild(el("p", { text: `cosplay服装（衣柜）：${noGender ? "-" : (role.wardrobeCosplays.join("，") || "-")}` }));
+      list.appendChild(el("p", { text: `拥有的cosplay服装：${noGender ? "-" : (role.wardrobeCosplays.join("，") || "-")}` }));
       list.appendChild(el("p", { text: `痛车：${noGender ? "-" : (role.painCarLabel || "-")}` }));
       list.appendChild(el("p", { text: `痛车样式：${noGender ? "-" : (role.painCarStyle || "-")}` }));
       list.appendChild(el("p", { text: `家长/公司强度：${noGender ? "-" : (role.specialLabel || "-")}` }));
@@ -443,6 +448,13 @@ export function render(state) {
         el("div", { className: "resourcePill", text: `金钱：${money}` }),
         el("div", { className: "resourcePill", text: `周边：${badges}` }),
       ];
+      // 仅在时间已激活时显示当前时间
+      if (state.run.timeMinutes != null) {
+        pills.push(el("div", {
+          className: "resourcePill",
+          text: `时间：${formatTimeHHMM(state.run.timeMinutes)}`,
+        }));
+      }
       // 仅在展会阶段（recognition 已激活）显示形态
       if (state.recognition != null) {
         pills.push(el("div", {
@@ -597,7 +609,7 @@ export function render(state) {
     wrapper.classList.remove("fab--open");
     setModal(true, {
       title: "注意",
-      body: "您正在尝试清除游戏数据，我们推荐您每次更新版本时，都进行一次清除。",
+      body: "您正在尝试清除游戏数据，这可能会导致令您后悔的不可逆的存档丢失。",
       confirmLabel: "清除数据",
       cancelLabel: "取消",
       onConfirm: () => {

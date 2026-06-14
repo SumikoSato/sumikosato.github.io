@@ -22,6 +22,7 @@ body {
   position: relative;
 }
 
+body[data-theme="default"]::after,
 body[data-theme="digiPattern"]::after {
   content: "";
   position: fixed;

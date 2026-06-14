@@ -16,7 +16,7 @@
       检测顺序：CSS Custom Properties + ES Modules → ES5 基础 → 不支持
     -->
     <!-- Native CSS：仅现代浏览器生效 -->
-    <link id="css-native" rel="stylesheet" href="./styles.css?v=26.6.9" media="none" />
+    <link id="css-native" rel="stylesheet" href="./styles.css?v=26.6.15" media="none" />
     <!-- Legacy CSS：默认加载，现代浏览器会在下方 JS 中禁用 -->
     <link id="css-legacy" rel="stylesheet" href="./Legacy/styles-legacy.css" />
     <script>
@@ -81,7 +81,7 @@
           /* ── 原生版本：ES Modules ─────────────────────── */
           var s = document.createElement("script");
           s.type = "module";
-          s.src = "./src/game.js?v=26.6.9";
+          s.src = "./src/game.js?v=26.6.15";
           document.body.appendChild(s);
 
           /* 加载超时提示 */
