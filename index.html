@@ -20,6 +20,10 @@
     <!-- Legacy CSS：默认加载，现代浏览器会在下方 JS 中禁用 -->
     <link id="css-legacy" rel="stylesheet" href="./Legacy/styles-legacy.css" />
     <script>
+      /* ── 维护和去世纪念落地页开关：设为 1 显示落地页，0 为正常游戏 ── */
+      var UmaRestInPeace = 1;
+    </script>
+    <script>
       /* ── CSS 路由（head 内立即执行，避免样式闪烁） ────── */
       (function () {
         var qs = location.search || "";
@@ -38,6 +42,22 @@
   </head>
   <body>
     <div id="app" class="appRoot">正在加载游戏......</div>
+
+    <!-- 落地页：UmaRestInPeace=1 时显示（变量在 <head> 中手动设置） -->
+    <div id="rip-page" style="display:none;text-align:center;padding:80px 20px;">
+      <h1 style="font-size:32px;color:#000000;">讣 告</h1>
+      <p style="font-size:18px;line-height:1.8;">
+        <img src="./pic/festa.png" alt="中山庆典"><br>
+        曾在2010年宝冢纪念获得冠军，凯旋门赏获得第二名的赛马ナカヤマフェスタ，中山庆典，<br>
+        因身体虚弱无法站立，于2026年8月23日0时54分逝世，享年20岁。<br>
+        作为社团第一批作品中的原型赛马，我们对无论是作为赛马的中山庆典，还是作为角色的中山庆典有着深厚的喜爱之情。<br>
+        如今惊闻此消息，我们深感痛惜，悲叹时间的无常。我们希望在彼岸，信子小姐能够与中山庆典重逢。<br>
+        同时希望各位能够在你们喜欢的原型赛马尚在的时候，一定要去多看看他们，不要留下遗憾。<br>
+        作为纪念，「去马娘Only是什么感觉」短暂停服至2026/8/25 11:00。感谢您的理解。<br>
+        爱丽数位装备社 于 2026/8/23<br>
+        <a href="https://db.netkeiba.com/horse/2006102424/" target="_blank" style="color:black">点击这里，了解中山庆典的生涯（中国大陆不可用）</a><br>
+      </p>
+    </div>
 
     <!-- 不支持提示页（默认隐藏，JS 路由决定是否显示） -->
     <div id="unsupported" style="display:none;text-align:center;padding:40px 20px;">
@@ -65,6 +85,13 @@
     -->
     <script>
       (function () {
+        /* ── 落地页：UmaRestInPeace=1 时直接显示，不再加载游戏 ── */
+        if (window.UmaRestInPeace === 1) {
+          document.getElementById("app").style.display = "none";
+          document.getElementById("rip-page").style.display = "block";
+          return;
+        }
+
         /* iOS 3 及以下直接走 unsupported（非目标平台，脚本加载会卡住） */
         var ua = navigator.userAgent || "";
         var ios3 = /iPhone OS [123]_\d/.test(ua) || /iPad;.*OS [123]_\d/.test(ua);
