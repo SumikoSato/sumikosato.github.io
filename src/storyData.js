@@ -1,11 +1,11 @@
-﻿// Static data shared across all storylines.
+// Static data shared across all storylines.
 // Storyline-specific data (PHONE_MODELS, templates, endings, etc.)
-// now lives in each storyline module (e.g. storyline_default.js).
+// now lives in content/*.json, not in code.
 
 import { UMA_NAMES, UMA_BIRTHDAYS } from "./umaNames.js";
 export { UMA_BIRTHDAYS };
 
-export const GAME_VERSION = "26.6.15";
+export const GAME_VERSION = "26.11.20";
 
 // Cosplay pool: sourced from lib/umalist.csv via umaNames.js.
 export const COSPLAY_POOL = UMA_NAMES;

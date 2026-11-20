@@ -1,0 +1,4 @@
+{
+  "//": "这只是一个给 Node 看的标记：src/ 下的文件是 ES Module（浏览器用 <script type=\"module\"> 加载）。项目根 package.json 是 commonjs，所以需要在这里覆盖一次，否则 Node 跑测试/编辑器时会把这些文件当成 CommonJS。浏览器不读取本文件。",
+  "type": "module"
+}

@@ -1,0 +1,512 @@
+{
+  "gameVersion": "26.11.20",
+  "audio": {
+    "zoomZoom": "./sound/mazda.mp3",
+    "umaTracks": [
+      "./sound/uma/4c8d1e6a.mp3",
+      "./sound/uma/9b2f5c73.mp3",
+      "./sound/uma/d1e4a8f6.mp3",
+      "./sound/uma/umapyoi.mp3"
+    ]
+  },
+  "cosplayPool": [
+    "特别周",
+    "无声铃鹿",
+    "东海帝皇",
+    "丸善斯基",
+    "富士奇迹",
+    "小栗帽",
+    "黄金船",
+    "伏特加",
+    "大和赤骥",
+    "大树快车",
+    "草上飞",
+    "菱亚马逊",
+    "目白麦昆",
+    "神鹰",
+    "好歌剧",
+    "成田白仁",
+    "鲁道夫象征",
+    "气槽",
+    "爱丽数码",
+    "青云天空",
+    "玉藻十字",
+    "美妙姿势",
+    "琵琶晨光",
+    "摩耶重炮",
+    "曼城茶座",
+    "美浦波旁",
+    "目白赖恩",
+    "菱曙",
+    "雪之美人",
+    "米浴",
+    "艾尼斯风神",
+    "爱丽速子",
+    "爱慕织姬",
+    "稻荷一",
+    "胜利奖券",
+    "空中神宫",
+    "荣进闪耀",
+    "真机伶",
+    "川上公主",
+    "黄金城",
+    "樱花进王",
+    "采珠",
+    "新光风",
+    "超级小海湾",
+    "醒目飞鹰",
+    "荒漠英雄",
+    "东瀛佐敦",
+    "中山庆典",
+    "成田大进",
+    "西野花",
+    "春乌拉拉",
+    "青竹回忆",
+    "微光飞驹",
+    "美丽周日",
+    "待兼福来",
+    "千明代表",
+    "名将怒涛",
+    "目白多伯",
+    "优秀素质",
+    "帝王光辉",
+    "待兼诗歌剧",
+    "生野狄杜斯",
+    "目白善信",
+    "大拓太阳神",
+    "双涡轮",
+    "里见光钻",
+    "北部玄驹",
+    "樱花千代王",
+    "天狼星象征",
+    "目白阿尔丹",
+    "八重无敌",
+    "鹤丸刚志",
+    "目白光明",
+    "樱花桂冠",
+    "成田路",
+    "也文摄辉",
+    "狂怒乐章",
+    "创升",
+    "希望之城",
+    "北方飞翔",
+    "吉兆",
+    "谷水琴蕾",
+    "第一红宝石",
+    "目白高峰",
+    "真弓快车",
+    "里见皇冠",
+    "高尚骏逸",
+    "极峰",
+    "强击",
+    "烈焰快驹",
+    "凯斯奇迹",
+    "森林宝穴",
+    "信念",
+    "莫名其妙",
+    "爱如往昔",
+    "小林历奇",
+    "北港火山",
+    "奇锐骏",
+    "万籁争鸣",
+    "莱斯莱斯",
+    "葛城王牌",
+    "新宇宙",
+    "菱钻奇宝",
+    "跳舞城",
+    "大鸣大放",
+    "莱茵力量",
+    "西沙里奥",
+    "空中救世主",
+    "房一潘多拉",
+    "迷人景致",
+    "黄金巨匠",
+    "贵妇人",
+    "凯旋芭蕾",
+    "梦之旅",
+    "金镇之光",
+    "多旺达",
+    "吹波糖",
+    "超常骏骥",
+    "杏目",
+    "放声欢呼",
+    "唯独爱你",
+    "创世驹",
+    "黄金旅程",
+    "神业",
+    "比萨胜驹"
+  ],
+  "templates": {
+    "high_school": {
+      "label": "高中生",
+      "weight": 1,
+      "money": 300,
+      "wardrobeCosCount": 1,
+      "hasPainCar": false,
+      "painCarTable": null,
+      "riskTable": "parent",
+      "phoneGroup": "高中生"
+    },
+    "college": {
+      "label": "大学生",
+      "weight": 1,
+      "money": 1000,
+      "wardrobeCosCount": 2,
+      "hasPainCar": true,
+      "painCarTable": "university",
+      "riskTable": null,
+      "phoneGroup": "大学生"
+    },
+    "office": {
+      "label": "社畜",
+      "weight": 1,
+      "money": 2000,
+      "wardrobeCosCount": 3,
+      "hasPainCar": true,
+      "painCarTable": "office",
+      "riskTable": "company",
+      "phoneGroup": "社畜"
+    }
+  },
+  "riskTables": {
+    "parent": [
+      {
+        "id": "none",
+        "label": "无",
+        "weight": 1,
+        "prob": 0
+      },
+      {
+        "id": "mid",
+        "label": "中",
+        "weight": 1,
+        "prob": 0.03
+      },
+      {
+        "id": "strong",
+        "label": "强",
+        "weight": 1,
+        "prob": 0.08
+      }
+    ],
+    "company": [
+      {
+        "id": "none",
+        "label": "无",
+        "weight": 1,
+        "prob": 0
+      },
+      {
+        "id": "mid",
+        "label": "中",
+        "weight": 1,
+        "prob": 0.05
+      },
+      {
+        "id": "strong",
+        "label": "强",
+        "weight": 1,
+        "prob": 0.1
+      }
+    ]
+  },
+  "phoneModels": [
+    {
+      "id": "GooglePixel6Pro",
+      "label": "Google Pixel 6 Pro",
+      "weight": 5,
+      "template": "高中生"
+    },
+    {
+      "id": "IPhoneSE2",
+      "label": "iPhone SE2",
+      "weight": 9,
+      "template": "高中生"
+    },
+    {
+      "id": "RedmiNote11",
+      "label": "Redmi Note 11",
+      "weight": 90,
+      "template": "高中生"
+    },
+    {
+      "id": "GooglePixel7a",
+      "label": "Google Pixel 7a",
+      "weight": 5,
+      "template": "大学生"
+    },
+    {
+      "id": "IPhone15Plus",
+      "label": "iPhone 15 Plus",
+      "weight": 39,
+      "template": "大学生"
+    },
+    {
+      "id": "RedmiK70Pro",
+      "label": "Redmi K70 Pro",
+      "weight": 60,
+      "template": "大学生"
+    },
+    {
+      "id": "GooglePixel10ProXL",
+      "label": "Google Pixel 10 Pro XL",
+      "weight": 5,
+      "template": "社畜"
+    },
+    {
+      "id": "IPhone17ProMax",
+      "label": "iPhone 17 Pro Max",
+      "weight": 49,
+      "template": "社畜"
+    },
+    {
+      "id": "OPPOFindX8Ultra",
+      "label": "OPPO Find X8 Ultra",
+      "weight": 50,
+      "template": "社畜"
+    }
+  ],
+  "carModels": [
+    {
+      "id": "DongnanV3",
+      "model": "V3菱悦",
+      "brand": "东南汽车"
+    },
+    {
+      "id": "Mazda6",
+      "model": "马自达6",
+      "brand": "一汽轿车马自达"
+    },
+    {
+      "id": "AudiA6L_C6",
+      "model": "A6L（C6）",
+      "brand": "一汽奥迪"
+    },
+    {
+      "id": "LamandoLGTS",
+      "model": "凌渡L GTS 380TSI",
+      "brand": "上汽大众"
+    },
+    {
+      "id": "Mazda3_Axela",
+      "model": "马自达3 次世代昂克赛拉",
+      "brand": "长安马自达"
+    },
+    {
+      "id": "AudiA6L_C8",
+      "model": "A6L（C8）",
+      "brand": "一汽奥迪"
+    },
+    {
+      "id": "CC_RV",
+      "model": "CC 猎装版",
+      "brand": "一汽大众"
+    },
+    {
+      "id": "S4_Avant",
+      "model": "S4 Avant",
+      "brand": "奥迪"
+    },
+    {
+      "id": "WagonR",
+      "model": "北斗星",
+      "brand": "昌河铃木"
+    },
+    {
+      "id": "AMG_A35L",
+      "model": "AMG A 35 L 4MATIC",
+      "brand": "北京奔驰"
+    },
+    {
+      "id": "435I",
+      "model": "BMW 435i",
+      "brand": "华晨宝马"
+    },
+    {
+      "id": "BJ323",
+      "model": "323 福美来",
+      "brand": "海南马自达"
+    }
+  ],
+  "painCarTables": {
+    "university": [
+      {
+        "id": "none",
+        "label": "无",
+        "weight": 80
+      },
+      {
+        "id": "BJ323",
+        "label": "海南马自达 323 福美来",
+        "weight": 5
+      },
+      {
+        "id": "WagonR",
+        "label": "昌河铃木 北斗星",
+        "weight": 5
+      },
+      {
+        "id": "DongnanV3",
+        "label": "东南汽车 V3菱悦",
+        "weight": 5
+      },
+      {
+        "id": "Mazda6",
+        "label": "一汽轿车马自达 马自达6",
+        "weight": 4
+      },
+      {
+        "id": "AudiA6L_C6",
+        "label": "一汽奥迪 A6L（C6）",
+        "weight": 1
+      }
+    ],
+    "office": [
+      {
+        "id": "none",
+        "label": "无",
+        "weight": 40
+      },
+      {
+        "id": "LamandoLGTS",
+        "label": "上汽大众 凌渡L GTS 380TSI",
+        "weight": 20
+      },
+      {
+        "id": "Mazda3_Axela",
+        "label": "长安马自达 马自达3 次世代昂克赛拉",
+        "weight": 25
+      },
+      {
+        "id": "AudiA6L_C8",
+        "label": "一汽奥迪 A6L（C8）",
+        "weight": 5
+      },
+      {
+        "id": "CC_RV",
+        "label": "一汽大众 CC 猎装版",
+        "weight": 5
+      },
+      {
+        "id": "435I",
+        "label": "华晨宝马 BMW 435i",
+        "weight": 2
+      },
+      {
+        "id": "AMG_A35L",
+        "label": "北京奔驰 AMG A 35 L 4MATIC",
+        "weight": 1
+      },
+      {
+        "id": "S4_Avant",
+        "label": "奥迪 S4 Avant",
+        "weight": 1
+      }
+    ]
+  },
+  "travelModes": [
+    {
+      "id": "selfDrive",
+      "label": "自驾",
+      "cost": 200,
+      "energy": -30,
+      "needsPainCar": true
+    },
+    {
+      "id": "highSpeedRail",
+      "label": "高铁",
+      "cost": 200,
+      "energy": -30
+    },
+    {
+      "id": "flight",
+      "label": "飞机",
+      "cost": 500,
+      "energy": -20
+    },
+    {
+      "id": "hardSeat",
+      "label": "硬座",
+      "cost": 50,
+      "energy": -60
+    }
+  ],
+  "hotels": [
+    {
+      "id": "HuaJiaoHotel",
+      "label": "花椒酒店",
+      "cost": 80,
+      "energy": 10
+    },
+    {
+      "id": "RuLaiJingXuan",
+      "label": "如来精选",
+      "cost": 100,
+      "energy": 20
+    },
+    {
+      "id": "HuaTing40",
+      "label": "华庭4.0",
+      "cost": 200,
+      "energy": 50
+    },
+    {
+      "id": "RuSiHaoWeiDeng",
+      "label": "瑞思豪威登",
+      "cost": 500,
+      "energy": 80
+    },
+    {
+      "id": "ShuiDaJie",
+      "label": "睡大街",
+      "cost": 0,
+      "energy": 0
+    }
+  ],
+  "makeupSlots": [
+    {
+      "time": 7,
+      "cost": 40,
+      "energy": -30
+    },
+    {
+      "time": 8,
+      "cost": 50,
+      "energy": -15
+    },
+    {
+      "time": 9,
+      "cost": 60,
+      "energy": -10
+    },
+    {
+      "time": 10,
+      "cost": 80,
+      "energy": 0
+    }
+  ],
+  "exhibition": {
+    "openTime": "10:00",
+    "closeTime": "18:00",
+    "slotMinutes": 30,
+    "recognitionDecay": 2
+  },
+  "runDefaults": {
+    "backpackCosplays": [],
+    "backpackBadges": 0,
+    "travelMode": null,
+    "hotelId": null,
+    "makeupBookedTime": null,
+    "makeupDone": false,
+    "timeMinutes": null,
+    "recognition": null,
+    "energy": null,
+    "isTourist": false,
+    "flags": {
+      "easterHasPinUsed": false,
+      "easterZoomZoomUsed": false,
+      "noMakeupFirstUsed": false,
+      "smokeOfferShown": false
+    }
+  }
+}

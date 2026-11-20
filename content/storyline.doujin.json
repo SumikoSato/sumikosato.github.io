@@ -1,0 +1,26 @@
+{
+  "id": "doujin",
+  "name": "DLC：社团模式",
+  "kind": "direct",
+  "enabled": true,
+  "menuLabel": "DLC：社团",
+  "firstNode": "doujin_start",
+  "endings": {},
+  "nodes": [
+    {
+      "id": "doujin_start",
+      "phase": "社团模式",
+      "title": "快来了。",
+      "text": "欢迎来到社团模式！\n这一模式是基于@草酸 @四维清泰 等人的建议而诞生的全新DLC。\n在这一全新的模式中，你可以扮演社团主催，通过完善你的同人创作，制定相应的宣发策略，使得你的创作在马娘Only上大放异彩！\n我们真的正在做了（新建storyline_doujin.js）。",
+      "choices": [
+        {
+          "id": "goto_wait_for_update",
+          "label": "问了没啊？",
+          "primary": true,
+          "ending": "waitForUpdate"
+        }
+      ],
+      "note": "DLC 占位节点：目前只有一句预告，正式内容待补。"
+    }
+  ]
+}

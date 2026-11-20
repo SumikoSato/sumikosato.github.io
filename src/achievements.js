@@ -4,6 +4,12 @@ const STORAGE_KEY = "maoOnly_textAdventure_achievements";
 
 /** 成就注册表 */
 export const ACHIEVEMENTS = [
+    {
+    "id": "smart_Choice",
+    "title": "明智的选择",
+    "desc": "拒绝烟草制品，从我做起。你做了人生中最明智的选择。",
+    "howToGet": "拒绝了其他人递来的香烟"
+  },
   {
     id: "buy_a_der",
     title: "买个Der",

@@ -2,7 +2,10 @@ const KEY = "maoOnly_textAdventure_save_v1";
 
 export function saveGame(state) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(state));
+    // `_contentNode` / `_contentChoices` 是运行时的节点缓存，
+    // 不进存档（否则内容更新后会读到过期的选项定义）。
+    const { _contentNode, _contentChoices, ...persisted } = state;
+    localStorage.setItem(KEY, JSON.stringify(persisted));
   } catch (e) {
     // Ignore storage failures (private mode, quota, etc.)
     console.warn("saveGame failed:", e);

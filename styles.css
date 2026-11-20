@@ -443,3 +443,136 @@ body:has(.eventBanner) {
   from { box-shadow: 0 2px 12px rgba(94, 168, 32, 0.4); }
   to   { box-shadow: 0 2px 20px rgba(152, 217, 74, 0.6); }
 }
+
+/* ── 剧情特效：黑白画面 / 隐藏悬浮按钮 ────────────────── */
+body.fx-grayscale {
+  filter: grayscale(1);
+}
+
+body.chrome-hidden .fab {
+  display: none !important;
+}
+
+/* ── 告示页：黑底白字，中英对照 ───────────────────────── */
+body.notice-mode {
+  background: #000 !important;
+  background-image: none !important;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* 全屏时（含强制全屏后）也不留白边 */
+html:has(body.notice-mode) {
+  background: #000;
+  overflow: hidden;
+}
+
+body.notice-mode::after {
+  display: none !important;
+}
+
+/* 告示页要盖住一切：纪念日横幅、悬浮按钮都不该露出来
+   （注意 .noticePage 本身就在 #app.appRoot 里面，别把 appRoot 一起藏了） */
+body.notice-mode .eventBanner {
+  display: none !important;
+}
+
+.noticePage {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 56px 20px;
+  background: #000;
+  color: #fff;
+  text-align: center;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 真·全屏时浏览器会给一个全屏画布，这里保证依旧是纯黑铺满 */
+.noticePage:fullscreen,
+:fullscreen .noticePage,
+:-webkit-full-screen .noticePage {
+  width: 100vw;
+  height: 100vh;
+}
+
+.noticePair {
+  max-width: 720px;
+}
+
+.noticePair + .noticePair {
+  margin-top: 44px;
+}
+
+/* 三类文字：中文原文 → 粤语 → 英文，层级依次递减 */
+.noticeZh {
+  margin: 0;
+  font-family: "SimSun", "宋体", "Songti SC", "Noto Serif CJK SC", serif;
+  font-size: clamp(19px, 5.4vw, 24px);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+}
+
+/* 粤语用繁体，字体也优先选带繁体字形的那几款（避免简体字体的骨架） */
+.noticeYue {
+  margin: 6px 0 0;
+  font-family: "LiSong Pro", "MingLiU", "PMingLiU", "Songti TC", "Noto Serif CJK TC",
+    "Source Han Serif TC", "SimSun", "宋体", serif;
+  font-size: clamp(16px, 4.6vw, 20px);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  color: #bdbdbd;
+}
+
+.noticeEn {
+  margin: 6px 0 0;
+  font-family: "Times New Roman", Times, "Liberation Serif", serif;
+  font-size: clamp(14px, 1.5vw, 18px);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: #9d9d9d;
+}
+
+/* 页脚：一条细线隔开的三行小字 */
+.noticeFooter {
+  margin-top: 80px;
+  padding-top: 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  width: min(100%, 520px);
+  max-width: 520px;
+}
+
+.noticeFootZh {
+  margin: 0;
+  font-family: "SimSun", "宋体", "Songti SC", "Noto Serif CJK SC", serif;
+  font-size: 15px;
+  line-height: 1.8;
+  letter-spacing: 0.04em;
+  color: #9a9a9a;
+}
+
+.noticeFootYue {
+  margin: 2px 0 0;
+  font-family: "SimSun", "宋体", "Songti SC", "Noto Serif CJK SC", serif;
+  font-size: 14px;
+  line-height: 1.8;
+  letter-spacing: 0.04em;
+  color: #8a8a8a;
+}
+
+.noticeFootEn {
+  margin: 2px 0 0;
+  font-family: "Times New Roman", Times, "Liberation Serif", serif;
+  font-size: 13px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: #7c7c7c;
+}

@@ -1,0 +1,2455 @@
+{
+  "id": "default",
+  "name": "主线：去马娘Only是什么感觉",
+  "kind": "roleSelect",
+  "enabled": true,
+  "menuLabel": "开始游戏",
+  "firstNode": "good_want_enzao_gate",
+  "endings": {
+    "neverStartDream": {
+      "name": "从未开始的梦",
+      "text": "你因为各种各样的原因和考虑，最终放弃了参与省城马娘Only。\n你很无奈，但没办法，只好在展会当天在群里复读「去马O，究竟是什么感觉」。"
+    },
+    "hopeMature": {
+      "name": "希望我能变得更成熟一些",
+      "text": "你的家长在不知道什么时候，看到了你的手机。\n虽然你已经成年，而且刚刚高中毕业，但你的家长依旧十分生气，觉得你不听话。\n“暑假这么长时间，不去打工，不去预习大学课程，非得和那些网上的狐朋狗友出去玩，他们什么学历你什么学历？你都这么大人了还和这些烂人玩，不好好爱惜羽毛。我们都是为你好，到时候你被这些不三不四，男扮女装的切了，都给他们数钱！”\n计划去省城的漫展，被家长抓了。如果你成绩再好一些，如果你再勇敢一些，可能马上就能去省城马娘Only了。\n感情等方面也如此。得不到的，与其坚持，不如转移目标。这期间可能会遇到更好的，但也有可能更配不上。或许努力一些就能得到更好的，又或许向现实妥协，选择凑合下去。\n希望以后你能变得更成熟一些。"
+    },
+    "loveYourself": {
+      "name": "要好好爱自己",
+      "text": "经过舟车劳顿，你还是不堪重负，倒下了。\n有人发现了你，把你送往最近的医院。\n回到家之后，你发现好多群友都在关心那个在马O路上晕倒的人怎么样了，你感受到了世界的善意。\n虽然如此，但是身体最重要，先好好爱自己，再去追求其他的热爱吧。"
+    },
+    "workWhy": {
+      "name": "人为什么要上班",
+      "text": "你的老板突然打来了电话，虽然你知道今天是休息日。\n“喂？你现在人在哪？打你好几个电话怎么都没接？现在客户要来审核，好几个文档都没有齐套，现在马上上会，把SMT、测试、硬件、组装领域的人都拉上来，把文档都对清楚了，别搞客诉！”\n你在漫展上打开笔记本电脑干活的样子，像个异类。你不知道这种日子什么时候才是个头。\n不断地内卷已经击垮了你对美好事物的一切向往，你甚至感到了一种无助。\n于是你回到公司的第二天，就提了离职，希望下一家公司能对你好一些。"
+    },
+    "selfDefense": {
+      "name": "正当防卫",
+      "text": "经过一整天的调解，对方受到了来自警方的批评教育。\n与此同时一段视频在互联网上疯狂传播，是对方恼羞成怒之后试图扒掉你的衣服，你将他控制在地上。\n评论区意外的一致，都是“有这样的力量，哪怕穿着裙子，那也是最男人的男人”。\n你有些欣慰。"
+    },
+    "braveGirl": {
+      "name": "勇敢的女孩子",
+      "text": "经过一整天的调查，对方受到了来自警方的批评教育。\n与此同时一段视频在互联网上疯狂传播，是对方将身体凑到你的身上，你顺势将他控制在地上。\n评论区意外的一致，都是“姐妹好样的，是我们女性的榜样”。\n你有些欣慰。"
+    },
+    "noOneLikesMe": {
+      "name": "没有人喜欢我",
+      "text": "因为无数的否定，你崩溃了。\n你发誓，以后再也不来这种地方。\n这不是你的问题，抱抱你。"
+    },
+    "superStar": {
+      "name": "超级大明星",
+      "text": "你今天真的很亮眼。\n很多人都找你合影，和你交换物料，你超级开心。\n你的QQ也多出了很多的好友，你很享受这种被认可的感觉。"
+    },
+    "nextTime": {
+      "name": "下次还来",
+      "text": "这是你第一次来这种同人展会。\n大家都很热情，你玩得也很开心，你觉得你下次一定要来。"
+    },
+    "somewhatLost": {
+      "name": "有些失落",
+      "text": "这是你第一次来这种同人展会。\n你似乎没感到什么正反馈，甚至还有些失落，不知道下次还要不要来。"
+    },
+    "realSomeoneLikesYou": {
+      "name": "真的会有人喜欢我吗",
+      "text": "这是你第一次来这种同人展会。\n你因为没有太多的正反馈，陷入了深深的自我质疑。\n这不是你的问题，抱抱你。"
+    },
+    "onlineBully": {
+      "name": "遭到网暴",
+      "text": "回到家，你的朋友转发了一条小红书链接给你。\n点开一看，正是那天的你，评论区还有一群人说你丑就不要来出cos\n你很崩溃，你感觉这辈子都不会再出cos了。\n但是这不是你的问题，抱抱你。"
+    },
+    "wigTorn": {
+      "name": "头套扯一地",
+      "text": "你的假发和衣服在场地内被撕成了碎片，他们拍着你的视频，肆意地嘲笑你。\n虽然你后来才知道出cos是一定要化妆的，但是你感到很痛苦，这辈子都不想出cos了，甚至你现在看着coser出现都会闪回。"
+    }
+  },
+  "nodes": [
+    {
+      "id": "good_want_enzao_gate",
+      "title": "好想去马娘Only",
+      "text": "这是一个晚上，你在QQ空间看见了列表在某地马娘Only玩得很开心，而你只是一个县城的coser，你知道这种盛大的且好玩的展会，与你这个身在小县城的人无关。\n直到你刷到了下一条说说，标题是：\n省城马娘Only 7/16 正式开展！\n你意识到省会好像离自己很近，于是加入了他们的群。而你看了看钱包和时间，你不知道自己真的能去到那里，和网上那些光鲜亮丽的coser一起玩。",
+      "choices": [
+        {
+          "id": "go",
+          "label": "去！",
+          "primary": true,
+          "next": "shop_enzao"
+        },
+        {
+          "id": "skip",
+          "label": "还是算了......",
+          "ending": "neverStartDream"
+        },
+        {
+          "id": "startArknights",
+          "label": "启动某个国产游戏！",
+          "ending": "ArknightsGameHeatup"
+        }
+      ]
+    },
+    {
+      "id": "shop_enzao",
+      "phase": "shop_enzao",
+      "title": "嗯造工坊",
+      "text": "欢迎来到嗯造工坊，我们是全国almost 最大的文创产品供应链平台。\n你可以在这里定制各种文创产品，只是交期我们从来都不敢向您保证......\n当然我们现在只提供徽章一种物品，其他物品敬请期待同人社团DLC上线！",
+      "choices": [
+        {
+          "id": "buy_badges",
+          "label": "购买徽章*10（金钱-50）",
+          "primary": true,
+          "cost": 50,
+          "steps": [
+            {
+              "badges": 10
+            },
+            {
+              "money": -50
+            }
+          ],
+          "next": "d14"
+        },
+        {
+          "id": "skip",
+          "label": "还是算了",
+          "next": "d14"
+        }
+      ]
+    },
+    {
+      "id": "d14",
+      "phase": "D-14",
+      "rules": [
+        {
+          "risk": "parentCompany",
+          "only": "hopeMature",
+          "ending": "hopeMature"
+        }
+      ],
+      "title": "要出什么角色呢......?",
+      "text": "你看着那些出着手游新实装角色的决胜服，很好看，虽然你的手里的确有cos服，但因为是出过的，你总希望去这种新场合的时候要有一身新行头。",
+      "choices": [
+        {
+          "id": "buy",
+          "label": "买套新的",
+          "primary": true,
+          "next": "shop_taobao"
+        },
+        {
+          "id": "skip",
+          "label": "还是算了",
+          "next": "d10"
+        }
+      ]
+    },
+    {
+      "id": "shop_taobao",
+      "phase": "shop_taobao",
+      "title": "掏宝商城-三面卡特斯",
+      "text": "欢迎来到三面卡特斯的店，这里你能买到各种各样的cos服，种类齐全，价格实惠。\n当然，质量和交期方面，我们就不保证了。反正就我们一家，肯定会有源源不断的coser来给我们送钱，不是吗？\n下面是我们的爆款cos服推荐，欢迎购买~",
+      "choiceGen": {
+        "sample": {
+          "pool": "COSPLAY_POOL",
+          "exclude": "run.wardrobeCosplays",
+          "count": 4,
+          "store": "run.shopCosOptions"
+        },
+        "template": {
+          "id": "buy_cos_{{$.index}}",
+          "label": "购买 {{$.item}} cos服*1（金钱-500）",
+          "primaryWhen": {
+            "path": "$.index",
+            "op": "==",
+            "value": 0
+          },
+          "cost": 500,
+          "steps": [
+            {
+              "money": -500
+            },
+            {
+              "push": {
+                "path": "run.wardrobeCosplays",
+                "value": "{{$.item}}"
+              }
+            }
+          ],
+          "next": "d10"
+        },
+        "extra": [
+          {
+            "id": "reroll",
+            "label": "刷新商店",
+            "next": "shop_taobao"
+          },
+          {
+            "id": "skip",
+            "label": "还是算了",
+            "next": "d10"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d10",
+      "phase": "D-10",
+      "rules": [
+        {
+          "risk": "parentCompany",
+          "only": "hopeMature",
+          "ending": "hopeMature"
+        }
+      ],
+      "title": "要约化妆师吗",
+      "text": "距离马O还剩下10天，你发现：如果你需要出cos的话，你需要一个化妆师（当然，群里管这个叫妆娘），虽然约妆的确是有点花钱，但是实际上，如果不化妆的话，除非你是那种超级好看的，否则还是很容易被人头套扯一地。\n当然，如果你想做游客的话，倒也没关系。",
+      "choices": [
+        {
+          "id": "yes",
+          "label": "去约妆",
+          "primary": true,
+          "next": "shop_makeup",
+          "gates": [
+            {
+              "modal": {
+                "title": "提示",
+                "body": "确定约妆吗？这之后你将以coser形态去到马娘Only。",
+                "confirmLabel": "正合我意",
+                "cancelLabel": "我再想想"
+              }
+            }
+          ]
+        },
+        {
+          "id": "no",
+          "label": "还是算了，游客，启动！",
+          "next": "d7",
+          "steps": [
+            {
+              "set": {
+                "run.isTourist": true
+              }
+            }
+          ],
+          "gates": [
+            {
+              "modal": {
+                "title": "提示",
+                "body": "确定不约妆吗？这之后你将以游客形态去到马娘Only。",
+                "confirmLabel": "正合我意",
+                "cancelLabel": "我再想想"
+              },
+              "block": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shop_makeup",
+      "phase": "shop_makeup",
+      "title": "约妆",
+      "text": "宝子们快来找我约妆呀~",
+      "choices": [
+        {
+          "id": "makeup_7",
+          "label": "预约当天7点的化妆（金钱-40）",
+          "primary": true,
+          "cost": 40,
+          "steps": [
+            {
+              "set": {
+                "run.makeupBookedTime": 7
+              }
+            },
+            {
+              "money": -40
+            }
+          ],
+          "next": "d7"
+        },
+        {
+          "id": "makeup_8",
+          "label": "预约当天8点的化妆（金钱-50）",
+          "cost": 50,
+          "steps": [
+            {
+              "set": {
+                "run.makeupBookedTime": 8
+              }
+            },
+            {
+              "money": -50
+            }
+          ],
+          "next": "d7"
+        },
+        {
+          "id": "makeup_9",
+          "label": "预约当天9点的化妆（金钱-60）",
+          "cost": 60,
+          "steps": [
+            {
+              "set": {
+                "run.makeupBookedTime": 9
+              }
+            },
+            {
+              "money": -60
+            }
+          ],
+          "next": "d7"
+        },
+        {
+          "id": "makeup_10",
+          "label": "预约当天10点的化妆（金钱-80）",
+          "cost": 80,
+          "steps": [
+            {
+              "set": {
+                "run.makeupBookedTime": 10
+              }
+            },
+            {
+              "money": -80
+            }
+          ],
+          "next": "d7"
+        },
+        {
+          "id": "skip",
+          "label": "还是算了",
+          "next": "d7"
+        }
+      ]
+    },
+    {
+      "id": "d7",
+      "phase": "D-7",
+      "rules": [
+        {
+          "risk": "parentCompany",
+          "only": "hopeMature",
+          "ending": "hopeMature"
+        },
+        {
+          "when": {
+            "not": {
+              "all": [
+                {
+                  "path": "run.painCarId",
+                  "op": "truthy"
+                },
+                {
+                  "path": "run.painCarId",
+                  "op": "!=",
+                  "value": "none"
+                }
+              ]
+            }
+          },
+          "goto": "travel_mode"
+        }
+      ],
+      "title": "开痛车去吗",
+      "text": "距离马O还剩下7天，你需要考虑一下你的出行方式。相比其他爱好者来讲，你很幸运有一辆{{path:run.painCarLabel}}的{{path:run.painCarStyle}}痛车，你在思考要不要把车开过去。",
+      "choices": [
+        {
+          "id": "paincar_open",
+          "label": "开！（需要燃油费-200）",
+          "primary": true,
+          "cost": 200,
+          "steps": [
+            {
+              "set": {
+                "run.travelMode": "selfDrive"
+              }
+            },
+            {
+              "money": -200
+            }
+          ],
+          "next": "d5"
+        },
+        {
+          "id": "paincar_close",
+          "label": "不开！",
+          "next": "travel_mode"
+        }
+      ]
+    },
+    {
+      "id": "travel_mode",
+      "phase": "D-7",
+      "title": "出行方式",
+      "text": "距离马O还剩下7天，你需要考虑一下你的出行方式。\n先打开不顺路出行App看看票吧。",
+      "choices": [
+        {
+          "id": "open_app",
+          "label": "打开不顺路出行App",
+          "primary": true,
+          "next": "shop_not_shunlu"
+        },
+        {
+          "id": "too_expensive",
+          "label": "好贵，还是算了",
+          "ending": "neverStartDream"
+        }
+      ]
+    },
+    {
+      "id": "shop_not_shunlu",
+      "phase": "shop_not_shunlu",
+      "title": "不顺路出行",
+      "text": "欢迎来到不顺路出行，我们可以预约各种各样的交通方式，包给您添堵的。",
+      "choices": [
+        {
+          "id": "highspeed",
+          "label": "购买高铁票*1（金钱-200）",
+          "primary": true,
+          "cost": 200,
+          "steps": [
+            {
+              "set": {
+                "run.travelMode": "highSpeedRail"
+              }
+            },
+            {
+              "money": -200
+            }
+          ],
+          "next": "d5"
+        },
+        {
+          "id": "flight",
+          "label": "购买飞机票*1（金钱-500）",
+          "cost": 500,
+          "steps": [
+            {
+              "set": {
+                "run.travelMode": "flight"
+              }
+            },
+            {
+              "money": -500
+            }
+          ],
+          "next": "d5"
+        },
+        {
+          "id": "hardseat",
+          "label": "购买硬座票*1（金钱-50）",
+          "cost": 50,
+          "steps": [
+            {
+              "set": {
+                "run.travelMode": "hardSeat"
+              }
+            },
+            {
+              "money": -50
+            }
+          ],
+          "next": "d5"
+        },
+        {
+          "id": "skip",
+          "label": "还是算了",
+          "ending": "neverStartDream"
+        }
+      ]
+    },
+    {
+      "id": "d5",
+      "phase": "D-5",
+      "rules": [
+        {
+          "risk": "parentCompany",
+          "only": "hopeMature",
+          "ending": "hopeMature"
+        }
+      ],
+      "title": "该住哪里",
+      "text": "距离马O还剩下5天，你需要考虑一下你到了那边该住哪里，总不能睡大街吧？",
+      "choices": [
+        {
+          "id": "open_app",
+          "label": "打开不去哪儿网App",
+          "primary": true,
+          "next": "shop_bu_qu_nar"
+        },
+        {
+          "id": "too_expensive",
+          "label": "好贵，还是算了",
+          "ending": "neverStartDream"
+        }
+      ]
+    },
+    {
+      "id": "shop_bu_qu_nar",
+      "phase": "shop_bu_qu_nar",
+      "title": "不去哪儿网",
+      "text": "欢迎来到不去哪儿网，我们可以预订从低端到高端各种各样的酒店，至于售后和客服？不存在的！",
+      "choices": [
+        {
+          "id": "huaJiao",
+          "label": "预定花椒酒店（金钱-80）",
+          "primary": true,
+          "cost": 80,
+          "steps": [
+            {
+              "set": {
+                "run.hotelId": "HuaJiaoHotel"
+              }
+            },
+            {
+              "money": -80
+            }
+          ],
+          "next": "d3"
+        },
+        {
+          "id": "ruLai",
+          "label": "预定如来精选（金钱-100）",
+          "cost": 100,
+          "steps": [
+            {
+              "set": {
+                "run.hotelId": "RuLaiJingXuan"
+              }
+            },
+            {
+              "money": -100
+            }
+          ],
+          "next": "d3"
+        },
+        {
+          "id": "huaTing",
+          "label": "预定华庭4.0（金钱-200）",
+          "cost": 200,
+          "steps": [
+            {
+              "set": {
+                "run.hotelId": "HuaTing40"
+              }
+            },
+            {
+              "money": -200
+            }
+          ],
+          "next": "d3"
+        },
+        {
+          "id": "ruSi",
+          "label": "预定瑞思豪威登（金钱-500）",
+          "cost": 500,
+          "steps": [
+            {
+              "set": {
+                "run.hotelId": "RuSiHaoWeiDeng"
+              }
+            },
+            {
+              "money": -500
+            }
+          ],
+          "next": "d3"
+        },
+        {
+          "id": "skip",
+          "label": "没有钱？睡大街！",
+          "cost": 0,
+          "steps": [
+            {
+              "set": {
+                "run.hotelId": "ShuiDaJie"
+              }
+            },
+            {
+              "money": 0
+            }
+          ],
+          "next": "d3"
+        }
+      ]
+    },
+    {
+      "id": "d3",
+      "phase": "D-3",
+      "rules": [
+        {
+          "risk": "parentCompany",
+          "only": "hopeMature",
+          "ending": "hopeMature"
+        }
+      ],
+      "title": "展前准备",
+      "text": "马上就要出发了，是出很美丽的cos，还是只是做一个普通游客呢？\n下拉菜单中选择你已经拥有的cos。",
+      "select": {
+        "label": "选择cos服",
+        "source": "run.wardrobeCosplays",
+        "emptyText": "（无可选cos）"
+      },
+      "choices": [
+        {
+          "id": "pick",
+          "label": "就决定是你了！",
+          "primary": true,
+          "next": "d1",
+          "disabledWhen": {
+            "path": "run.isTourist",
+            "op": "truthy"
+          },
+          "disabledHint": "你在此之前已经选择了以游客的形式参与",
+          "gates": [
+            {
+              "when": {
+                "path": "ctx.disabledClick",
+                "op": "truthy"
+              },
+              "modal": {
+                "title": "提示",
+                "body": "你在此之前已经选择了以游客的形式参与。",
+                "confirmLabel": "好"
+              },
+              "block": true
+            }
+          ]
+        },
+        {
+          "id": "skip",
+          "label": "还是算了，游客，启动！",
+          "next": "d1",
+          "gates": [
+            {
+              "when": {
+                "path": "run.makeupBookedTime",
+                "op": "notNull"
+              },
+              "modal": {
+                "title": "提醒",
+                "body": "可是你已经约了化妆师诶……",
+                "confirmLabel": "确认"
+              },
+              "block": true
+            }
+          ]
+        }
+      ],
+      "onChoice": [
+        {
+          "when": {
+            "all": [
+              {
+                "path": "ctx.choiceId",
+                "op": "==",
+                "value": "pick"
+              },
+              {
+                "path": "ctx.selectedValue",
+                "op": "truthy"
+              }
+            ]
+          },
+          "steps": [
+            {
+              "move": {
+                "from": "run.wardrobeCosplays",
+                "to": "run.backpackCosplays",
+                "value": "{{selected}}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d1",
+      "phase": "D-1",
+      "rules": [
+        {
+          "risk": "parentCompany",
+          "only": "hopeMature",
+          "ending": "hopeMature"
+        },
+        {
+          "steps": [
+            {
+              "set": {
+                "run.energy": 100
+              }
+            }
+          ]
+        },
+        {
+          "steps": [
+            {
+              "lookup": {
+                "target": "run.energy",
+                "table": "travelModes",
+                "key": "run.travelMode",
+                "field": "energy",
+                "mode": "add"
+              }
+            }
+          ]
+        },
+        {
+          "when": {
+            "path": "run.energy",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "loveYourself"
+        }
+      ],
+      "title": "马O途中",
+      "text": "你通过{{expr: (S.travelModes ?? []).find(m => m.id === run.travelMode)?.label ?? '未知交通'}}，经过了几个小时的路程之后，终于到达了省城。\n看着省城里的高楼大厦，你很感慨。你也梦想着有朝一日，能够在这样的大城市里生活。",
+      "choices": [
+        {
+          "id": "arrive",
+          "label": "到达目的地",
+          "primary": true,
+          "next": "event_dinner"
+        }
+      ]
+    },
+    {
+      "id": "event_dinner",
+      "phase": "dinner",
+      "title": "晚餐时间",
+      "text": "你终于到了省城，舟车劳顿之后你感到很饿。\n掏出手机，你打开「饱了吗」App，发现这里的饭菜远比那个小县城里要丰富上数倍。",
+      "choices": [
+        {
+          "id": "barbeque",
+          "label": "用饱了吗App点餐：自助烤肉（精力+40，金钱-80）",
+          "primary": true,
+          "cost": 80,
+          "steps": [
+            {
+              "energy": 40
+            },
+            {
+              "money": -80
+            }
+          ],
+          "next": "event_hotel"
+        },
+        {
+          "id": "mcn",
+          "label": "用饱了吗App点餐：麦肯王（精力+20，金钱-40）",
+          "cost": 40,
+          "steps": [
+            {
+              "energy": 20
+            },
+            {
+              "money": -40
+            }
+          ],
+          "next": "event_hotel"
+        },
+        {
+          "id": "mala",
+          "label": "用饱了吗App点餐：张福麻辣烫（精力+10，金钱-20）",
+          "cost": 20,
+          "steps": [
+            {
+              "energy": 10
+            },
+            {
+              "money": -20
+            }
+          ],
+          "next": "event_hotel"
+        },
+        {
+          "id": "skip",
+          "label": "好贵，还是算了（精力-20）",
+          "steps": [
+            {
+              "energy": -20
+            }
+          ],
+          "next": "event_hotel"
+        }
+      ]
+    },
+    {
+      "id": "event_hotel",
+      "phase": "hotel",
+      "rules": [
+        {
+          "when": {
+            "path": "run.hotelId",
+            "op": "==",
+            "value": "ShuiDaJie"
+          },
+          "goto": "event_meiqianshuidajie"
+        }
+      ],
+      "title": "入住酒店",
+      "text": "吃过晚饭，你入住了{{expr: (S.hotels ?? []).find(h => h.id === run.hotelId)?.label ?? String(run.hotelId || '-')}}。你放下背包，简单洗了个澡，准备睡觉。\n你此刻感觉充满了信心。",
+      "choices": [
+        {
+          "id": "next_day",
+          "label": "迎接第二天",
+          "primary": true,
+          "next": "morning"
+        }
+      ]
+    },
+    {
+      "id": "event_meiqianshuidajie",
+      "phase": "hotel",
+      "title": "睡大街了",
+      "text": "吃过晚饭，由于你确实没钱预订酒店，但好在你准备了睡大街的各种工具。\n简单收拾之后，你找到了地铁站附近的一个长椅，手机打开省电模式，准备在这里凑合一晚。\n虽然这个地方确实有点冷，但好在你平安无事地挺过了一晚。",
+      "choices": [
+        {
+          "id": "next_day",
+          "label": "迎接第二天",
+          "primary": true,
+          "next": "morning_onstreet"
+        }
+      ]
+    },
+    {
+      "id": "morning",
+      "phase": "那一天的早上",
+      "rules": [
+        {
+          "risk": "parentCompany",
+          "only": "hopeMature",
+          "ending": "hopeMature"
+        },
+        {
+          "steps": [
+            {
+              "hotelEnergy": true
+            }
+          ]
+        },
+        {
+          "when": {
+            "path": "run.energy",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "loveYourself"
+        },
+        {
+          "when": {
+            "path": "run.timeMinutes",
+            "op": "isNull"
+          },
+          "set": {
+            "run.timeMinutes": 360
+          }
+        }
+      ],
+      "title": "那一天的早上",
+      "text": "早上起来，你看着楼下三三两两地出现了一些coser，你很开心，你也想加入他们，可你和他们......真的很熟吗？",
+      "choices": [
+        {
+          "id": "direct",
+          "label": "直接出发",
+          "primary": true,
+          "next": "subway",
+          "visibleWhen": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "count==",
+                "value": 0
+              },
+              {
+                "path": "run.makeupBookedTime",
+                "op": "falsy"
+              }
+            ]
+          }
+        },
+        {
+          "id": "prepare",
+          "label": "换上cos服，准备出发",
+          "primary": true,
+          "next": "subway",
+          "visibleWhen": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "count>",
+                "value": 0
+              },
+              {
+                "path": "run.makeupBookedTime",
+                "op": "falsy"
+              }
+            ]
+          }
+        },
+        {
+          "id": "go_makeup",
+          "label": "换上cos服，前往化妆",
+          "primary": true,
+          "next": "event_to_makeup",
+          "visibleWhen": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "count>",
+                "value": 0
+              },
+              {
+                "path": "run.makeupBookedTime",
+                "op": "truthy"
+              }
+            ]
+          }
+        },
+        {
+          "id": "direct_fallback",
+          "label": "直接出发",
+          "primary": true,
+          "next": "subway",
+          "visibleWhen": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "count==",
+                "value": 0
+              },
+              {
+                "path": "run.makeupBookedTime",
+                "op": "truthy"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "morning_onstreet",
+      "phase": "从街头醒来",
+      "rules": [
+        {
+          "risk": "parentCompany",
+          "only": "hopeMature",
+          "ending": "hopeMature"
+        },
+        {
+          "steps": [
+            {
+              "hotelEnergy": true
+            }
+          ]
+        },
+        {
+          "when": {
+            "path": "run.energy",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "loveYourself"
+        },
+        {
+          "when": {
+            "path": "run.timeMinutes",
+            "op": "isNull"
+          },
+          "set": {
+            "run.timeMinutes": 240
+          }
+        }
+      ],
+      "title": "从街头醒来",
+      "text": "凌晨四点，你从公园长椅上起来，天刚蒙蒙亮，你有点腰酸背痛。\n广场上有几个大爷似乎在准备晨练，远处听到餐车的声音。你看了看身边的东西，幸好没丢，你想着在这种地方过夜，人没事就行。\n然后你拿出手机，不错，还有一半的电。看了看群里，还有一些人在说话，你意识到这个时间确实有些早了，于是你决定找个地方坐一会，等待化妆的时间。",
+      "choices": [
+        {
+          "id": "direct",
+          "label": "直接出发",
+          "primary": true,
+          "next": "subway",
+          "visibleWhen": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "count==",
+                "value": 0
+              },
+              {
+                "path": "run.makeupBookedTime",
+                "op": "falsy"
+              }
+            ]
+          }
+        },
+        {
+          "id": "prepare",
+          "label": "带好cos服，准备出发",
+          "primary": true,
+          "next": "subway",
+          "visibleWhen": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "count>",
+                "value": 0
+              },
+              {
+                "path": "run.makeupBookedTime",
+                "op": "falsy"
+              }
+            ]
+          }
+        },
+        {
+          "id": "go_makeup",
+          "label": "带好cos服，前往化妆",
+          "primary": true,
+          "next": "event_to_makeup",
+          "visibleWhen": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "count>",
+                "value": 0
+              },
+              {
+                "path": "run.makeupBookedTime",
+                "op": "truthy"
+              }
+            ]
+          }
+        },
+        {
+          "id": "direct_fallback",
+          "label": "直接出发",
+          "primary": true,
+          "next": "subway",
+          "visibleWhen": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "count==",
+                "value": 0
+              },
+              {
+                "path": "run.makeupBookedTime",
+                "op": "truthy"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "event_to_makeup",
+      "variants": [
+        {
+          "when": {
+            "chance": 0.03333333333333333
+          },
+          "steps": [
+            {
+              "set": {
+                "run.makeupDone": false
+              }
+            },
+            {
+              "set": {
+                "run.timeMinutes": "{{expr: ((run.makeupBookedTime ?? 9) * 60) + 120 }}"
+              }
+            },
+            {
+              "achievement": "makeup_run"
+            }
+          ],
+          "title": "妆娘跑路了！",
+          "text": "你和其他找这位妆娘化妆的同好们集体在酒店楼下傻了眼，因为你们发现，无论是微信语音还是电话，没有一样可以接通。\n最终你和他们傻等了两个小时，只好顶着一张没化过妆的脸赶去马娘Only的现场，并希望不要被人头套扯一地。",
+          "choices": [
+            {
+              "id": "grit",
+              "label": "硬着头皮，挤上地铁",
+              "primary": true,
+              "next": "subway"
+            }
+          ]
+        },
+        {
+          "title": "前往化妆",
+          "text": "你来到化妆师所在的地方，这是你第一次被别人化妆，你感觉是很新奇的体验。",
+          "choices": [
+            {
+              "id": "done",
+              "label": "化妆完成，准备出发",
+              "primary": true,
+              "next": "event_go_makeup_result"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "event_go_makeup_result",
+      "enter": [
+        {
+          "set": {
+            "run.energy": "{{expr: clamp((run.energy ?? 0) + (S.makeupSlots.find(s => s.time === run.makeupBookedTime)?.energy ?? 0), 0, 100) }}"
+          }
+        },
+        {
+          "set": {
+            "run.timeMinutes": "{{expr: run.makeupBookedTime * 60 + 60}}"
+          }
+        },
+        {
+          "set": {
+            "run.makeupDone": true
+          }
+        }
+      ],
+      "rules": [
+        {
+          "when": {
+            "path": "run.energy",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "loveYourself"
+        }
+      ],
+      "title": "化妆完成",
+      "text": "化妆结束后，你看着镜子里的自己，心情复杂又有点兴奋。\n你预约的是当天{{path:run.makeupBookedTime}}:00的化妆，整个化妆过程花费了1个小时。{{expr: (S.makeupSlots.find(s => s.time === run.makeupBookedTime)?.energy ?? 0) === 0 ? '你的精力值没有变化。' : '你的精力值' + (S.makeupSlots.find(s => s.time === run.makeupBookedTime)?.energy ?? 0) + '。'}}",
+      "choices": [
+        {
+          "id": "depart",
+          "label": "准备出发",
+          "primary": true,
+          "next": "subway"
+        }
+      ]
+    },
+    {
+      "id": "subway",
+      "phase": "在地铁上",
+      "rules": [
+        {
+          "when": {
+            "path": "run.travelMode",
+            "op": "==",
+            "value": "selfDrive"
+          },
+          "goto": "subway_wind"
+        },
+        {
+          "when": {
+            "path": "run.timeMinutes",
+            "op": "isNull"
+          },
+          "steps": [
+            {
+              "set": {
+                "run.timeMinutes": 540
+              }
+            }
+          ]
+        },
+        {
+          "risk": "parentCompany"
+        },
+        {
+          "when": {
+            "all": [
+              {
+                "chance": 0.7
+              },
+              {
+                "path": "run.gender",
+                "op": "==",
+                "value": 0
+              },
+              {
+                "chance": 0.8
+              }
+            ]
+          },
+          "goto": "subway_not_man_woman"
+        },
+        {
+          "when": {
+            "all": [
+              {
+                "chance": 0.7
+              },
+              {
+                "path": "run.gender",
+                "op": "!=",
+                "value": 0
+              },
+              {
+                "chance": 0.8
+              }
+            ]
+          },
+          "goto": "subway_man_flirt"
+        },
+        {
+          "goto": "subway_wind"
+        }
+      ]
+    },
+    {
+      "id": "subway_not_man_woman",
+      "phase": "在地铁上",
+      "title": "不男不女",
+      "text": "你穿着赛马娘的cos服，这时一个看起来不怀好意的老大爷走过来，突然指着你，质问你「男的女的？穿这种日本动漫的衣服干什么？你是什么目的？」",
+      "choices": [
+        {
+          "id": "ignore",
+          "label": "不予理会（精力值-10）",
+          "primary": true,
+          "steps": [
+            {
+              "energy": -10
+            },
+            {
+              "time": 30
+            }
+          ],
+          "next": "only_welcome"
+        },
+        {
+          "id": "explain",
+          "label": "试图说明（？？？）",
+          "next": "subway_not_man_woman_explain"
+        }
+      ]
+    },
+    {
+      "id": "subway_not_man_woman_explain",
+      "variants": [
+        {
+          "when": {
+            "chance": 0.5
+          },
+          "title": "干什么！",
+          "text": "对方丝毫不理会你，甚至被你的行为激怒了，在一阵怒吼之后，他扑上来大喊「你是不是男的？是不是没长那玩意？我现在就把你的衣服扒下来！」，此时你意识到不对，凭借体力优势，将其控制在地上。这时，乘警来到了你的附近......",
+          "choices": [
+            {
+              "id": "help",
+              "label": "协助调查",
+              "primary": true,
+              "ending": "selfDefense"
+            }
+          ]
+        },
+        {
+          "when": {
+            "path": "run.energy",
+            "op": "<=",
+            "value": 0
+          },
+          "steps": [
+            {
+              "time": 30
+            }
+          ],
+          "ending": "loveYourself"
+        },
+        {
+          "steps": [
+            {
+              "time": 30
+            }
+          ],
+          "title": "解释清楚",
+          "text": "幸好这个老大爷看起来不是那么不讲理，在经历了一番劝说之后，老大爷终于收起了锋芒，在下一站离开了车厢。你有点纳闷，现在的老年人怎么这样？",
+          "choices": [
+            {
+              "id": "continue",
+              "label": "问题解决",
+              "primary": true,
+              "next": "only_welcome"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "subway_man_flirt",
+      "phase": "在地铁上",
+      "title": "被男性搭讪",
+      "text": "你穿着赛马娘的cos服，这时一个看起来不怀好意的男子走过来，贴近了你，问你「小姐姐是不是玩cos的？加个好友？」",
+      "choices": [
+        {
+          "id": "ignore",
+          "label": "不予理会（精力值-10）",
+          "primary": true,
+          "steps": [
+            {
+              "energy": -10
+            },
+            {
+              "time": 30
+            }
+          ],
+          "next": "only_welcome"
+        },
+        {
+          "id": "refuse",
+          "label": "试图拒绝（？？？）",
+          "next": "subway_man_flirt_refuse"
+        }
+      ]
+    },
+    {
+      "id": "subway_man_flirt_refuse",
+      "variants": [
+        {
+          "when": {
+            "chance": 0
+          },
+          "title": "勇敢说不",
+          "text": "对方丝毫不理会你，开始伸出手来，此时你意识到不对，因为学过跆拳道的原因，你成功将其控制在地上。这时，乘警来到了你的附近......",
+          "choices": [
+            {
+              "id": "help",
+              "label": "协助调查",
+              "primary": true,
+              "ending": "braveGirl"
+            }
+          ]
+        },
+        {
+          "when": {
+            "path": "run.energy",
+            "op": "<=",
+            "value": 0
+          },
+          "steps": [
+            {
+              "time": 30
+            }
+          ],
+          "ending": "loveYourself"
+        },
+        {
+          "steps": [
+            {
+              "time": 30
+            }
+          ],
+          "title": "有惊无险",
+          "text": "还好对方只是单纯想要扩列，在说清了不想加好友之后，对方也就离开了你，去到了下一节车厢。你有点纳闷，现在的人是不是抖音刷多了？",
+          "choices": [
+            {
+              "id": "continue",
+              "label": "问题解决",
+              "primary": true,
+              "next": "only_welcome"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "subway_wind",
+      "phase": "在地铁上",
+      "title": "风平浪静",
+      "text": "你在路上风平浪静，没有发生任何事情，安全抵达了现场。",
+      "enter": [
+        {
+          "time": 30
+        }
+      ],
+      "choices": [
+        {
+          "id": "get_off",
+          "label": "进入地点",
+          "primary": true,
+          "next": "only_welcome"
+        }
+      ]
+    },
+    {
+      "id": "only_welcome",
+      "phase": "欢迎来到马娘Only",
+      "enter": [
+        {
+          "set": {
+            "run.recognition": "{{expr: run.recognition == null ? 50 : run.recognition}}"
+          }
+        },
+        {
+          "time": 60
+        }
+      ],
+      "rules": [
+        {
+          "risk": "parentCompany"
+        },
+        {
+          "risk": "parentCompany"
+        }
+      ],
+      "variants": [
+        {
+          "when": {
+            "expr": "run.timeMinutes < 600"
+          },
+          "title": "稍作等待",
+          "text": "现在时间是{{time}}，你决定稍作等待，等到10点准时进入。",
+          "choices": [
+            {
+              "id": "wait",
+              "label": "继续",
+              "primary": true,
+              "steps": [
+                {
+                  "setTime": "10:00"
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        },
+        {
+          "goto": "exhibition_loop"
+        }
+      ]
+    },
+    {
+      "id": "exhibition_loop",
+      "rules": [
+        {
+          "when": {
+            "expr": "run.hotelId === 'ShuiDaJie' && Number(run.timeMinutes) >= 720 && !(run.flags && run.flags.smokeOfferShown)"
+          },
+          "goto": "event_smoke_offer"
+        },
+        {
+          "when": {
+            "expr": "run.timeMinutes >= 1080"
+          },
+          "goto": "after_only"
+        },
+        {
+          "steps": [
+            {
+              "recognition": -2
+            }
+          ]
+        },
+        {
+          "when": {
+            "path": "run.recognition",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "noOneLikesMe"
+        }
+      ],
+      "random": {
+        "pick": [
+          {
+            "goto": "ex_wind",
+            "weight": 2
+          },
+          {
+            "goto": "ex_post",
+            "weight": 55
+          },
+          {
+            "goto": "ex_great_creator",
+            "weight": 10
+          },
+          {
+            "goto": "ex_stage_program",
+            "weight": 10
+          },
+          {
+            "goto": "ex_expansion",
+            "weight": 10
+          },
+          {
+            "goto": "ex_paincar_approved",
+            "weight": 10
+          },
+          {
+            "goto": "ex_no_makeup",
+            "weight": 10
+          },
+          {
+            "goto": "ex_pixel_easter",
+            "weightFrom": {
+              "base": 10,
+              "missPath": "state.pixelMissCount",
+              "step": 5,
+              "max": 50
+            }
+          },
+          {
+            "goto": "ex_zoom_zoom",
+            "weightFrom": {
+              "base": 10,
+              "missPath": "state.zoomMissCount",
+              "step": 5,
+              "max": 50
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ex_wind",
+      "title": "风平浪静",
+      "text": "这段时间似乎什么都没发生，你选择继续游场。",
+      "choices": [
+        {
+          "id": "continue",
+          "label": "继续游场（认可度-5）",
+          "primary": true,
+          "steps": [
+            {
+              "recognition": -5
+            },
+            {
+              "time": 30
+            }
+          ],
+          "next": "exhibition_loop"
+        }
+      ]
+    },
+    {
+      "id": "ex_post",
+      "variants": [
+        {
+          "when": {
+            "path": "run.backpackCosplays",
+            "op": "notEmpty"
+          },
+          "title": "被集邮了！",
+          "text": "有人觉得你cos的{{cosplay}}很好看，他想要和你合影。",
+          "choices": [
+            {
+              "id": "btn1",
+              "label": "合影并递上周边（认可度+5，周边数量-1）",
+              "primary": true,
+              "requiresBadges": 1,
+              "steps": [
+                {
+                  "recognition": 5
+                },
+                {
+                  "badges": -1
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn2",
+              "label": "合影（认可度+3）",
+              "steps": [
+                {
+                  "recognition": 3
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn3",
+              "label": "还是不了（认可度-5）",
+              "steps": [
+                {
+                  "recognition": -5
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        },
+        {
+          "title": "可以和老师集邮吗？",
+          "text": "你看到了一个coser，觉得他很好看，你想要和他合影。",
+          "choices": [
+            {
+              "id": "btn1",
+              "label": "合影并递上周边（认可度+3，周边数量-1）",
+              "primary": true,
+              "requiresBadges": 1,
+              "steps": [
+                {
+                  "recognition": 3
+                },
+                {
+                  "badges": -1
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn2",
+              "label": "合影（认可度+1）",
+              "steps": [
+                {
+                  "recognition": 1
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn3",
+              "label": "还是不了（认可度-5）",
+              "steps": [
+                {
+                  "recognition": -5
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex_great_creator",
+      "title": "很棒的同人老师",
+      "text": "你遇到了一个你十分喜欢的同人摊位，角色和风格都很戳你，这让你想要购买。",
+      "choices": [
+        {
+          "id": "btn1",
+          "label": "立即购买（认可度+10，金钱-20）",
+          "primary": true,
+          "cost": 20,
+          "steps": [
+            {
+              "recognition": 10
+            },
+            {
+              "money": -20
+            },
+            {
+              "time": 30
+            }
+          ],
+          "next": "exhibition_loop"
+        },
+        {
+          "id": "btn2",
+          "label": "还是不了",
+          "steps": [
+            {
+              "time": 30
+            }
+          ],
+          "next": "exhibition_loop"
+        }
+      ]
+    },
+    {
+      "id": "ex_stage_program",
+      "audio": "umaRandom",
+      "title": "喜欢的舞台节目",
+      "text": "你看到了非常喜欢的舞台节目，他的舞姿如此有张力，以至于你感到精神都升华到了新的境界。",
+      "autoDisableMs": 3000,
+      "choices": [
+        {
+          "id": "btn1",
+          "label": "きみの愛馬が!",
+          "primary": true,
+          "steps": [
+            {
+              "energy": 10
+            },
+            {
+              "time": 30
+            }
+          ],
+          "next": "exhibition_loop"
+        }
+      ]
+    },
+    {
+      "id": "ex_expansion",
+      "title": "扩列了！",
+      "text": "你遇到了一位同人作者，她递给你一份无料，其中的自我介绍，你觉得这是一个很有态度的人......",
+      "choices": [
+        {
+          "id": "btn1",
+          "label": "加好友并交换周边（认可度+10，周边数量-1）",
+          "primary": true,
+          "requiresBadges": 1,
+          "gates": [
+            {
+              "when": {
+                "rollBelow": 0.3333333333333333
+              },
+              "modal": {
+                "title": "关注我们",
+                "htmlBody": "首先感谢您游玩我们的游戏，您的支持就是我们最大的动力。<br><br>如果您对我们的社团有着进一步的兴趣，可以通过以下方式掌握我们的最新动态：<br><br>QQ群：308610161 <a href=\"https://qm.qq.com/q/YQvlAiqniU\" target=\"_blank\">点击添加</a><br>小红书账号：ADEquipOfficial <a href=\"https://www.xiaohongshu.com/user/profile/685c15dc000000001b019187\" target=\"_blank\">点击前往</a>",
+                "confirmLabel": "好"
+              },
+              "block": false
+            },
+            {
+              "when": {
+                "rollBelow": 0.6666666666666666
+              },
+              "modal": {
+                "title": "也看看其他的社团？",
+                "htmlBody": "首先感谢您游玩我们的游戏，您的支持就是我们最大的动力。<br>这里推荐一批同样很棒的同人社团和作者：<br>CY还我血汗钱 QQ群：1039520736 <a href=\"https://qm.qq.com/q/vo8kGr0MV4\" target=\"_blank\">点击添加</a><br>马铁U彩 QQ群：2151029801 <a href=\"https://qm.qq.com/q/Rf8CbiPxCw\" target=\"_blank\">点击添加</a><br>",
+                "confirmLabel": "好"
+              },
+              "block": false
+            }
+          ],
+          "steps": [
+            {
+              "recognition": 10
+            },
+            {
+              "badges": -1
+            },
+            {
+              "time": 30
+            }
+          ],
+          "next": "exhibition_loop"
+        },
+        {
+          "id": "btn3",
+          "label": "加好友（认可度+3）",
+          "steps": [
+            {
+              "recognition": 3
+            },
+            {
+              "time": 30
+            }
+          ],
+          "next": "exhibition_loop"
+        },
+        {
+          "id": "btn2",
+          "label": "还是不了（认可度-5）",
+          "steps": [
+            {
+              "recognition": -5
+            },
+            {
+              "time": 30
+            }
+          ],
+          "next": "exhibition_loop"
+        }
+      ]
+    },
+    {
+      "id": "ex_paincar_approved",
+      "variants": [
+        {
+          "when": {
+            "path": "run.travelMode",
+            "op": "==",
+            "value": "selfDrive"
+          },
+          "title": "痛车得到认可",
+          "text": "你的{{painCarModel}}的{{painCarStyle}}痛车得到了极大的认可，有coser和你的痛车合影，而且还大赞你的痛车十分有品。",
+          "choices": [
+            {
+              "id": "btn1",
+              "label": "感谢他（认可度+10）",
+              "primary": true,
+              "steps": [
+                {
+                  "recognition": 10
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        },
+        {
+          "steps": [
+            {
+              "set": {
+                "run._evCar": "{{expr: (() => { const c = CAR_MODELS[Math.floor(Math.random()*CAR_MODELS.length)]; return (c.brand ? c.brand + ' ' : '') + c.model; })() }}"
+              }
+            },
+            {
+              "set": {
+                "run._evUma": "{{expr: UMA_NAMES[Math.floor(Math.random()*UMA_NAMES.length)] }}"
+              }
+            }
+          ],
+          "title": "这车真帅吧",
+          "text": "你看到了一辆{{path:run._evCar}}的{{path:run._evUma}}痛车，非常喜欢。你对车主表达了赞叹，并想要拍一张照片。",
+          "choices": [
+            {
+              "id": "btn1",
+              "label": "拍照并递上周边（认可度+5，周边数量-1）",
+              "primary": true,
+              "requiresBadges": 1,
+              "steps": [
+                {
+                  "recognition": 5
+                },
+                {
+                  "badges": -1
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn2",
+              "label": "拍照（认可度+1）",
+              "steps": [
+                {
+                  "recognition": 1
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn3",
+              "label": "还是不了（认可度-5）",
+              "steps": [
+                {
+                  "recognition": -5
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex_no_makeup",
+      "variants": [
+        {
+          "when": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "notEmpty"
+              },
+              {
+                "path": "run.makeupDone",
+                "op": "truthy"
+              }
+            ]
+          },
+          "title": "奇怪的眼神",
+          "text": "在游场的过程中，你听到了身边有人在看着你，而且还不知道在嘀咕什么。\n“你看那个，他出的{{cosplay}}好不还原，真是毁角色！”\n“没事，我现在把他拍下来，然后马上投厕，有的是人骂他。”\n其中一个人举起手机，摄像头对准了你，就在他按下快门之前，你转过身来看着他们......",
+          "choices": [
+            {
+              "id": "btn1",
+              "label": "掷骰子！",
+              "primary": true,
+              "steps": [
+                {
+                  "pendingDice": {
+                    "win": {
+                      "goto": "dice_aftermath",
+                      "steps": [
+                        {
+                          "set": {
+                            "run.pendingDice": null
+                          }
+                        }
+                      ]
+                    },
+                    "lose": {
+                      "ending": "onlineBully"
+                    },
+                    "draw": {
+                      "steps": [
+                        {
+                          "recognition": -20
+                        },
+                        {
+                          "energy": -20
+                        },
+                        {
+                          "set": {
+                            "run.pendingDice": null
+                          }
+                        }
+                      ],
+                      "goto": "dice_aftermath"
+                    }
+                  }
+                }
+              ],
+              "next": "dice_roll"
+            },
+            {
+              "id": "btn2",
+              "label": "不阻止（认可度-40）",
+              "steps": [
+                {
+                  "recognition": -40
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn3",
+              "label": "阻止对方的侵权行为（认可度-20，精力值-20）",
+              "steps": [
+                {
+                  "recognition": -20
+                },
+                {
+                  "energy": -20
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        },
+        {
+          "when": {
+            "all": [
+              {
+                "path": "run.backpackCosplays",
+                "op": "notEmpty"
+              },
+              {
+                "path": "run.makeupDone",
+                "op": "falsy"
+              },
+              {
+                "path": "run.flags.noMakeupFirstUsed",
+                "op": "falsy"
+              }
+            ]
+          },
+          "steps": [
+            {
+              "flag": {
+                "noMakeupFirstUsed": true
+              }
+            }
+          ],
+          "title": "没化妆......",
+          "text": "有人注意到了你，你的皮肤上似乎没有任何化妆品的痕迹。\n由于各种原因，妆娘跑路也好，忘记下单也好，总之你意识到自己没化妆被人发现了。\n而事情的展开总比你想象的还要快，他拦住了你。\n“不是，你不化妆出什么cos啊，是害怕别人不知道你长得丑吗？”他指着你的脸，唾沫星子溅到了你的脸上。\n“我告诉你，这是我推，你这样做就是在侮辱她，反正今天我不把你衣服扒下来你跑不了！”对方继续张牙舞爪，甚至试图要动手......",
+          "choices": [
+            {
+              "id": "btn1",
+              "label": "跑！（认可度-50）",
+              "primary": true,
+              "steps": [
+                {
+                  "recognition": -50
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn2",
+              "label": "掷骰子！",
+              "steps": [
+                {
+                  "pendingDice": {
+                    "win": {
+                      "goto": "dice_aftermath",
+                      "steps": [
+                        {
+                          "set": {
+                            "run.pendingDice": null
+                          }
+                        }
+                      ]
+                    },
+                    "lose": {
+                      "ending": "wigTorn"
+                    },
+                    "draw": {
+                      "steps": [
+                        {
+                          "recognition": -20
+                        },
+                        {
+                          "energy": -20
+                        },
+                        {
+                          "set": {
+                            "run.pendingDice": null
+                          }
+                        }
+                      ],
+                      "goto": "dice_aftermath"
+                    }
+                  }
+                }
+              ],
+              "next": "dice_roll"
+            },
+            {
+              "id": "btn3",
+              "label": "呼叫保安（认可度-20，精力值-20）",
+              "steps": [
+                {
+                  "recognition": -20
+                },
+                {
+                  "energy": -20
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        },
+        {
+          "goto": "ex_wind"
+        }
+      ]
+    },
+    {
+      "id": "ex_pixel_easter",
+      "variants": [
+        {
+          "when": {
+            "all": [
+              {
+                "path": "run.phoneLabel",
+                "op": "contains",
+                "value": "Pixel"
+              },
+              {
+                "path": "run.flags.easterHasPinUsed",
+                "op": "falsy"
+              }
+            ]
+          },
+          "steps": [
+            {
+              "flag": {
+                "easterHasPinUsed": true
+              }
+            },
+            {
+              "set": {
+                "state.pixelMissCount": 0
+              }
+            }
+          ],
+          "title": "有品！",
+          "text": "有人看到了你用Pixel手机，感觉你十分有品。想要和你扩列。",
+          "autoDisableMs": 3000,
+          "choices": [
+            {
+              "id": "btn1",
+              "label": "加好友并交换周边（认可度+50，周边数量-1）",
+              "primary": true,
+              "requiresBadges": 1,
+              "steps": [
+                {
+                  "recognition": 50
+                },
+                {
+                  "badges": -1
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn2",
+              "label": "还是不了",
+              "steps": [
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        },
+        {
+          "goto": "ex_wind"
+        }
+      ]
+    },
+    {
+      "id": "ex_zoom_zoom",
+      "audio": "zoomZoom",
+      "variants": [
+        {
+          "when": {
+            "all": [
+              {
+                "path": "run.painCarLabel",
+                "op": "contains",
+                "value": "马自达"
+              },
+              {
+                "path": "run.travelMode",
+                "op": "==",
+                "value": "selfDrive"
+              },
+              {
+                "path": "run.flags.easterZoomZoomUsed",
+                "op": "falsy"
+              }
+            ]
+          },
+          "steps": [
+            {
+              "flag": {
+                "easterZoomZoomUsed": true
+              }
+            },
+            {
+              "set": {
+                "state.zoomMissCount": 0
+              }
+            }
+          ],
+          "title": "Zoom-Zoom",
+          "text": "有人看到了你{{painCarModel}}的{{painCarStyle}}痛车。\n“哟？马自达？这牌子，我现在见得越来越少了。”他拍了拍你的肩膀。\n“怎么说，你也开马自达？”你试探性地问。\n“RX-8，原装进口，一汽引进，全国为数不多能上路的转子发动机车型。”他指了指远处的RX-8，随手掏出了带有三角转子logo的车钥匙。\n“我去，玩转子的，幸会幸会。”你看他和RX-8的眼神多了几分光。\n......\n在接下来的几十分钟里，你们相谈甚欢，这时他问你要不要加个好友。",
+          "autoDisableMs": 3000,
+          "choices": [
+            {
+              "id": "btn1",
+              "label": "加好友并交换周边（认可度+50，周边数量-1）",
+              "primary": true,
+              "requiresBadges": 1,
+              "steps": [
+                {
+                  "recognition": 50
+                },
+                {
+                  "badges": -1
+                },
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            },
+            {
+              "id": "btn2",
+              "label": "还是不了",
+              "steps": [
+                {
+                  "time": 30
+                }
+              ],
+              "next": "exhibition_loop"
+            }
+          ]
+        },
+        {
+          "goto": "ex_wind"
+        }
+      ]
+    },
+    {
+      "id": "dice_roll",
+      "title": "{{expr: state.nodeTitle || '骰子对决'}}",
+      "text": "你决定正面应对，和对方来一场骰子对决。",
+      "enter": [
+        {
+          "roll": {
+            "store": "run._dicePlayer",
+            "sides": 6
+          }
+        },
+        {
+          "roll": {
+            "store": "run._diceOpponent",
+            "sides": 6
+          }
+        }
+      ],
+      "choices": [
+        {
+          "id": "go",
+          "label": "掷骰子！",
+          "primary": true,
+          "next": "dice_result"
+        }
+      ]
+    },
+    {
+      "id": "dice_result",
+      "title": "骰子结果",
+      "text": "你掷出了 {{expr: [\"⚀\",\"⚁\",\"⚂\",\"⚃\",\"⚄\",\"⚅\"][run._dicePlayer-1]}}{{path:run._dicePlayer}}，对手掷出了 {{expr: [\"⚀\",\"⚁\",\"⚂\",\"⚃\",\"⚄\",\"⚅\"][run._diceOpponent-1]}}{{path:run._diceOpponent}}。\n{{expr: run._dicePlayer > run._diceOpponent ? '你赢了！' : run._dicePlayer < run._diceOpponent ? '你输了......' : '平局。'}}",
+      "choices": [
+        {
+          "id": "next",
+          "label": "继续",
+          "primary": true,
+          "next": "dice_aftermath"
+        }
+      ]
+    },
+    {
+      "id": "dice_aftermath",
+      "kind": "dice",
+      "advanceTime": 30,
+      "after": [
+        {
+          "when": {
+            "path": "run.recognition",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "noOneLikesMe"
+        },
+        {
+          "when": {
+            "path": "run.energy",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "loveYourself"
+        },
+        {
+          "when": {
+            "expr": "run.timeMinutes >= 1080"
+          },
+          "goto": "after_only"
+        }
+      ],
+      "default": "exhibition_loop"
+    },
+    {
+      "id": "after_only",
+      "phase": "马O之后",
+      "rules": [
+        {
+          "risk": "parentCompany"
+        }
+      ],
+      "title": "要聚餐吗",
+      "text": "刚刚结束了的马娘Only，大家似乎意犹未尽，于是有人提议去聚餐。你刚刚认识的新朋友也要拉着你一起。",
+      "choices": [
+        {
+          "id": "yes",
+          "label": "去！（金钱-50，精力值+30，认可值+10）",
+          "primary": true,
+          "cost": 50,
+          "steps": [
+            {
+              "energy": 30
+            },
+            {
+              "recognition": 10
+            },
+            {
+              "money": -50
+            }
+          ],
+          "next": "go_home"
+        },
+        {
+          "id": "no",
+          "label": "不去！",
+          "next": "go_home"
+        }
+      ]
+    },
+    {
+      "id": "go_home",
+      "phase": "各回各家",
+      "enter": [
+        {
+          "lookup": {
+            "target": "run.energy",
+            "table": "travelModes",
+            "key": "run.travelMode",
+            "field": "energy",
+            "mode": "add"
+          }
+        },
+        {
+          "clamp": {
+            "run.energy": [
+              0,
+              100
+            ]
+          }
+        }
+      ],
+      "rules": [
+        {
+          "when": {
+            "path": "run.energy",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "loveYourself"
+        }
+      ],
+      "title": "各回各家",
+      "text": "你通过{{expr: ({selfDrive:'自驾',hardSeat:'硬座',highSpeedRail:'高铁',flight:'飞机'})[run.travelMode] || '未知交通'}}，经过了几个小时的路程之后，终于回到了小县城。\n回想着今天经历的一切，你的泪水慢慢地滑了出来。你不知道以后还有没有机会和他们见面。",
+      "choices": [
+        {
+          "id": "arrive",
+          "label": "到达目的地",
+          "primary": true,
+          "next": "resolve_ending"
+        }
+      ]
+    },
+    {
+      "id": "resolve_ending",
+      "rules": [
+        {
+          "when": {
+            "path": "run.recognition",
+            "op": "<=",
+            "value": 0
+          },
+          "ending": "noOneLikesMe"
+        },
+        {
+          "when": {
+            "path": "run.recognition",
+            "op": ">=",
+            "value": 80
+          },
+          "ending": "superStar"
+        },
+        {
+          "when": {
+            "path": "run.recognition",
+            "op": ">=",
+            "value": 50
+          },
+          "ending": "nextTime"
+        },
+        {
+          "when": {
+            "path": "run.recognition",
+            "op": ">=",
+            "value": 20
+          },
+          "ending": "somewhatLost"
+        },
+        {
+          "ending": "realSomeoneLikesYou"
+        }
+      ]
+    },
+    {
+      "id": "event_smoke_offer",
+      "phase": "展会当天的中午",
+      "enter": [
+        {
+          "set": {
+            "run.flags.smokeOfferShown": true
+          }
+        }
+      ],
+      "title": "来一根？",
+      "text": "在展会外面的吸烟区，你看到了一群人正在吸烟。\n其中一个人看到了你，走了过来，递给你一根烟。\n“兄弟，来一根？”\n此时，在长椅上睡了一整晚，很累。据说烟能提神，虽然很难闻，但是你还是很好奇，想加入他们。\n你的教育告诉你，吸烟有害健康。但你看着他们吞云吐雾的样子，很酷。\n你的内心在挣扎。",
+      "choices": [
+        {
+          "id": "yes",
+          "label": "是",
+          "next": "event_smoke_yes"
+        },
+        {
+          "id": "no",
+          "label": "否",
+          "primary": true,
+          "steps": [
+            {
+              "achievement": "smart_Choice"
+            }
+          ],
+          "next": "exhibition_loop"
+        }
+      ]
+    },
+    {
+      "id": "event_smoke_yes",
+      "phase": "展会当天的中午",
+      "fx": "grayscale",
+      "chrome": "hidden",
+      "title": "游戏结束",
+      "text": "很不幸，你做出了错误的选择。\n由于你开始尝试吸烟，导致你的健康每况愈下，你的人生走入了不归路。\n后来，一般的香烟已经无法满足你，你开始尝试大功率的电子烟，尼古丁让你的精神逐渐恍惚。\n最终，你死于尼古丁过量。医生看见你，马上就说：“已经没救了”。\n你的父母捏着鼻子，看着你一股烟臭的遗体，嫌弃地说“这是我的孩子吗”？\n你的朋友们并没有太惋惜，因为你现在是一个浑身烟臭，满口黄牙的烟鬼，没有人想要认你这朋友。\n后来解剖你的尸体，肺部已经黑到不能再看了，解剖医师也摇了摇头。\n你死得其所，死的不冤，你没有经受住香烟的诱惑。\n就这样吧，你已经死了。",
+      "choices": [
+        {
+          "id": "understood",
+          "label": "明白了",
+          "primary": true,
+          "next": "smoke_notice"
+        }
+      ]
+    },
+    {
+      "id": "smoke_notice",
+      "kind": "notice",
+      "phase": "展会当天的中午",
+      "lines": [
+        {
+          "zh": "尼古丁没有安全剂量",
+          "yue": "尼古丁冇安全劑量",
+          "en": "There is NO safe dose of nicotine."
+        },
+        {
+          "zh": "请勿因一时好奇，尝试烟草制品",
+          "yue": "唔好因為一時好奇，就去試煙草製品",
+          "en": "DO NOT try tobacco products out of momentary curiosity."
+        },
+        {
+          "zh": "如您正在吸烟，请尽早戒烟",
+          "yue": "如果你食仲緊煙，請盡快戒煙",
+          "en": "If you are smoking, please quit AS SOON AS POSSIBLE."
+        }
+      ],
+      "footer": {
+        "zh": "不要试着刷新了，你的人生有第二次机会吗？",
+        "yue": "唔好諗住重載刺，你嘅人生冇第二次機會！",
+        "en": "STOP REFRESHING. Does your life get a second chance?"
+      }
+    }
+  ]
+}

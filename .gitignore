@@ -1,3 +1,19 @@
+# 依赖
 node_modules/
+
+# 本地工具/助手配置
 .qwen/
-legacy.config.mjs
+
+# 可视化编辑器（本地工具，不随游戏仓库分发）
+# 里面的 test/baseline/ 是旧剧本的回归对拍基线，也只服务本地测试
+editor/
+启动编辑器.bat
+
+# 可视化编辑器自动备份（每次保存前的内容快照，体积会增长）
+content/.backups/
+
+# 系统/编辑器垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

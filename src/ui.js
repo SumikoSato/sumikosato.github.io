@@ -41,6 +41,27 @@ let __uiScreen = null; // overlay screen (e.g. "achievements"), takes priority o
 let __konamiRevealed = false;
 let __konamiIndex = 0;
 
+/** 主菜单上的剧本按钮，由 game.js 依据 content/manifest.json 注入 */
+let menuStorylines = [];
+
+/** 成就列表：默认用 achievements.js 里的内置列表，加载内容后由 game.js 换成 content/achievements.json */
+let achievementList = ACHIEVEMENTS;
+
+export function setAchievementList(list) {
+  achievementList = Array.isArray(list) && list.length ? list : ACHIEVEMENTS;
+  if (__uiScreen === "achievements") render(window.__latestState || {});
+}
+
+export function setMenuStorylines(list) {
+  menuStorylines = Array.isArray(list) ? list : [];
+}
+
+/** 供 game.js 注入页脚显示的版本号文案 */
+let versionText = "UmaFesSimulator";
+export function setVersionText(v) {
+  if (v) versionText = v;
+}
+
 const KONAMI_SEQ = [
   "arrowup","arrowup","arrowdown","arrowdown",
   "arrowleft","arrowright","arrowleft","arrowright",
@@ -189,12 +210,22 @@ const GitHubLink = el("a", {
 
   const versionLink = el("a", {
     href: "#",
-    text: "版本号：UmaFesSimulator 26.6.15 橙子果酱生日纪念版",
-    onclick: (e) => {
+    text: "版本号：" + versionText,
+    onclick: async (e) => {
       e.preventDefault();
+      // 更新日志不再写死：取 update_history.md 的第一段（最新一版），以后改 md 就够
+      let body = `当前版本：${versionText}`;
+      try {
+        const resp = await fetch("./update_history.md");
+        const md = await resp.text();
+        const latest = md.split(/\r?\n\s*\r?\n/)[0].trim();
+        if (latest) body = latest;
+      } catch {
+        /* 读不到就用兜底的那一行 */
+      }
       setModal(true, {
         title: "更新日志",
-        body: "UmaFesSimulator 26.6.15 橙子果酱生日纪念版 更新内容\n——默认主题焕新升级，增加了由@WangMT 制作的游戏图标。\n——游戏架构升级，使用独立的故事引擎和独立的配置文件，为后续DLC功能做好准备。\n——基于全新架构大量丰富文案，充实游戏内容。(时间有限只优化了部分文案，非常私密马赛（鞠躬）（咔咔咔）)\n——解决开车时仍然会进入地铁特殊事件的问题。\n——增加了时间显示功能，方便您确认展会的剩余时间。\n——增加睡大街功能，现在你可以在马娘Only前一天睡大街了。感谢@阿道夫希尔薇 的贡献。\n——加入新游戏内容预告，敬请期待！",
+        body,
         confirmLabel: "我知道了",
       });
     },
@@ -235,12 +266,23 @@ export function render(state) {
   app.innerHTML = "";
   window.__latestState = state;
 
+  // 内容节点可以要求整页特效（目前只有 fx:"grayscale" 黑白）与
+  // 隐藏右下角悬浮按钮（chrome:"hidden"）。告示页也总是隐藏悬浮按钮。
+  const screenNow = state && state.screen;
+  const inGame = screenNow === "game";
+  document.body.classList.toggle("fx-grayscale", inGame && state.fx === "grayscale");
+  document.body.classList.toggle(
+    "chrome-hidden",
+    (inGame && state.chrome === "hidden") || screenNow === "notice",
+  );
+  document.body.classList.toggle("notice-mode", screenNow === "notice");
+
   /* ── Achievements overlay ─────────────────────────── */
   if (__uiScreen === "achievements") {
     const { card, body } = makeCard("成就");
     const unlocked = getUnlockedIds();
     const revealed = __konamiRevealed;
-    ACHIEVEMENTS.forEach((ach, i) => {
+    achievementList.forEach((ach, i) => {
       const got = unlocked.has(ach.id);
       const show = got || revealed;
       const row = el("div", { style: "display:flex;align-items:flex-start;justify-content:space-between;padding:12px 0;" }, [
@@ -287,7 +329,7 @@ export function render(state) {
 
   /* ── Main Menu ──────────────────────────────────────── */
   if (state.screen === "mainMenu") {
-    const { card, body } = makeCard("去马娘Only是什么感觉");
+    const { card, body } = makeCard(state.menuTitle || "去马娘Only是什么感觉");
     body.appendChild(
       el("p", {
         className: "lead",
@@ -303,23 +345,35 @@ export function render(state) {
         text: "想去真的马娘Only？不妨来马O地图看看>>",
       }),
     );
-    body.appendChild(
-      el("div", { className: "controls" }, [
-         el("button", {
-          text: "DLC：社团",
-          onclick: () => dispatchAction && dispatchAction("start_doujin"),
-        }),
-        el("button", {
-          className: "primary",
-          text: "开始游戏",
-          onclick: () => dispatchAction && dispatchAction("start_role_select"),
-        }),
-        el("button", {
-          text: "查看成就",
-          onclick: () => { __uiScreen = "achievements"; render(state); },
-        }),
-      ]),
+    const menuButtons = [];
+    for (const sl of menuStorylines) {
+      if (sl.kind === "roleSelect") {
+        menuButtons.push(
+          el("button", {
+            className: menuButtons.length === 0 ? "primary" : "",
+            text: sl.menuLabel || "开始游戏",
+            onclick: () => dispatchAction && dispatchAction("start_role_select", { payload: sl.id }),
+          }),
+        );
+      } else {
+        menuButtons.push(
+          el("button", {
+            className: menuButtons.length === 0 ? "primary" : "",
+            text: sl.menuLabel || sl.name,
+            onclick: () => dispatchAction && dispatchAction("start_story", { payload: sl.id }),
+          }),
+        );
+      }
+    }
+    menuButtons.push(
+      el("button", {
+        className: menuButtons.length === 0 ? "primary" : "",
+        text: "查看成就",
+        onclick: () => { __uiScreen = "achievements"; render(state); },
+      }),
     );
+
+    body.appendChild(el("div", { className: "controls" }, menuButtons));
     app.appendChild(card);
     appendFooter(app);
     return;
@@ -537,6 +591,29 @@ export function render(state) {
     }
     app.appendChild(card);
     appendFooter(app);
+    return;
+  }
+
+  /* ── Notice：黑底白字告示页（无按钮） ────────────────── */
+  if (state.screen === "notice") {
+    const page = el("div", { className: "noticePage" });
+    const lines = Array.isArray(state.noticeLines) ? state.noticeLines : [];
+    lines.forEach((line) => {
+      const pair = el("div", { className: "noticePair" });
+      if (line && line.zh) pair.appendChild(el("p", { className: "noticeZh", text: line.zh }));
+      if (line && line.yue) pair.appendChild(el("p", { className: "noticeYue", text: line.yue }));
+      if (line && line.en) pair.appendChild(el("p", { className: "noticeEn", text: line.en }));
+      page.appendChild(pair);
+    });
+    const footer = state.noticeFooter;
+    if (footer && (footer.zh || footer.yue || footer.en)) {
+      const box = el("div", { className: "noticeFooter" });
+      if (footer.zh) box.appendChild(el("p", { className: "noticeFootZh", text: footer.zh }));
+      if (footer.yue) box.appendChild(el("p", { className: "noticeFootYue", text: footer.yue }));
+      if (footer.en) box.appendChild(el("p", { className: "noticeFootEn", text: footer.en }));
+      page.appendChild(box);
+    }
+    app.appendChild(page);
     return;
   }
 
